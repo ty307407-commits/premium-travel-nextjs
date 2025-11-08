@@ -30,12 +30,18 @@
   - smallClassCode: hakone
 - [x] 箱根の宿5件取得テスト成功
 - [ ] tRPC procedures追加（次のPhase）
-- [ ] ✅ チェックポイント作成: "Phase 3: Rakuten Travel API"
-
-### Phase 3: Rakuten tRPC統合
-- [ ] routers.tsにrakuten proceduresを追加
-- [ ] curlでテスト
-- [ ] ✅ チェックポイント作成: "Phase 3: Rakuten tRPC procedures"
+- [x] ✅ チェックポイント作成: "Phase 3: Rakuten Travel API" (version: b41bd38a)
+### Phase 4: tRPCサーバーセットアップ
+- [x] tRPCパッケージインストール
+- [x] server/trpc.ts作成（tRPC初期化）
+- [x] server/router.ts作成（Google Sheets + Rakuten API procedures）
+- [x] server/index.tsにtRPC Expressアダプター統合
+- [x] client/src/lib/trpc.ts作成（フロントエンドクライアント）
+- [x] client/src/lib/trpc-provider.tsx作成
+- [x] App.tsxにTRPCProvider追加
+- [x] server/_core/index.ts作成（互換性shim）
+- [x] tRPC APIテスト成功（箱根の宿2件取得）
+- [ ] ✅ チェックポイント作成: "Phase 4: tRPC server setup" procedures"
 
 ### Phase 4: 箱根ページ（最小版）
 - [ ] client/src/pages/Hakone.tsx作成
