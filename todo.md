@@ -41,7 +41,7 @@
 - [x] App.tsxにTRPCProvider追加
 - [x] server/_core/index.ts作成（互換性shim）
 - [x] tRPC APIテスト成功（箱根の宿2件取得）
-- [ ] ✅ チェックポイント作成: "Phase 4: tRPC server setup" procedures"
+- [x] ✅ チェックポイント作成: "Phase 4: tRPC server setup" (version: 5624f175)
 
 ### Phase 4: 箱根ページ（最小版）
 - [ ] client/src/pages/Hakone.tsx作成
