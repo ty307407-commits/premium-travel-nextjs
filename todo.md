@@ -21,16 +21,16 @@
 - [x] googleapisパッケージインストール
 - [x] 接続テスト成功（43テンプレート、箱根データ、235テーマ取得）
 - [ ] tRPC procedures追加（次のPhase）
-- [ ] ✅ チェックポイント作成: "Phase 1: Google Sheets API integration"
+- [x] ✅ チェックポイント作成: "Phase 1: Google Sheets API integration" (version: 3aaacc77)
 
-### Phase 2: Rakuten Travel API修正
-- [ ] server/rakuten.ts作成（正しいエリアコード使用）
+### Phase 3: Rakuten Travel API修正
+- [x] server/rakuten.ts作成（正しいエリアコード使用）
   - largeClassCode: japan
   - middleClassCode: kanagawa
   - smallClassCode: hakone
-- [ ] tRPC procedures追加（rakuten.searchHotels）
-- [ ] 箱根の宿5件取得テスト
-- [ ] ✅ チェックポイント作成: "Phase 2: Rakuten Travel API"
+- [x] 箱根の宿5件取得テスト成功
+- [ ] tRPC procedures追加（次のPhase）
+- [ ] ✅ チェックポイント作成: "Phase 3: Rakuten Travel API"
 
 ### Phase 3: Rakuten tRPC統合
 - [ ] routers.tsにrakuten proceduresを追加
