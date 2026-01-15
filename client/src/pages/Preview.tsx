@@ -3,20 +3,42 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Loader2, Database } from "lucide-react";
+import { trpc } from "@/lib/trpc";
 
 export default function Preview() {
   const [content, setContent] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [pageId, setPageId] = useState<number | null>(null);
+  const [inputPageId, setInputPageId] = useState('');
+
+  // TiDBからの記事取得
+  const articleQuery = trpc.articles.getByPageId.useQuery(
+    { pageId: pageId! },
+    {
+      enabled: pageId !== null,
+      retry: false,
+    }
+  );
 
   // URLパラメータからの自動読み込み
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const url = params.get('url');
+    const id = params.get('id');
 
-    if (url) {
+    // ?id= パラメータ: TiDBから取得
+    if (id) {
+      const numId = parseInt(id);
+      if (!isNaN(numId)) {
+        setPageId(numId);
+        setLoading(true);
+      }
+    }
+    // ?url= パラメータ: 外部URLから取得
+    else if (url) {
       setLoading(true);
       setError('');
 
@@ -36,6 +58,22 @@ export default function Preview() {
         });
     }
   }, []);
+
+  // TiDBクエリの結果を処理
+  useEffect(() => {
+    if (articleQuery.data) {
+      setContent(articleQuery.data.content || '');
+      setShowPreview(true);
+      setLoading(false);
+    }
+    if (articleQuery.error) {
+      setError('記事が見つかりません (Page ID: ' + pageId + ')');
+      setLoading(false);
+    }
+    if (articleQuery.isLoading && pageId !== null) {
+      setLoading(true);
+    }
+  }, [articleQuery.data, articleQuery.error, articleQuery.isLoading, pageId]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,12 +96,23 @@ export default function Preview() {
     }
   };
 
+  const handleSearchById = () => {
+    const numId = parseInt(inputPageId);
+    if (!isNaN(numId)) {
+      setError('');
+      setPageId(numId);
+      setLoading(true);
+    }
+  };
+
   // ローディング画面
   if (loading) {
     return (
       <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
         <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
-        <p className="text-gray-600">記事を読み込み中...</p>
+        <p className="text-gray-600">
+          {pageId ? `ページID ${pageId} の記事を読み込み中...` : '記事を読み込み中...'}
+        </p>
       </main>
     );
   }
@@ -84,6 +133,28 @@ export default function Preview() {
           )}
 
           <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
+            {/* TiDBから取得 */}
+            <div className="mb-6 pb-6 border-b">
+              <span className="text-gray-700 font-medium flex items-center gap-2 mb-3">
+                <Database className="w-4 h-4" />
+                ページIDで検索
+              </span>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  placeholder="例: 897"
+                  value={inputPageId}
+                  className="flex-1 p-2 border rounded-lg text-sm"
+                  onChange={(e) => setInputPageId(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearchById()}
+                />
+                <Button onClick={handleSearchById} disabled={!inputPageId}>
+                  取得
+                </Button>
+              </div>
+            </div>
+
+            {/* ファイルアップロード */}
             <label className="block mb-4">
               <span className="text-gray-700 font-medium flex items-center gap-2">
                 <Upload className="w-4 h-4" />
@@ -126,15 +197,26 @@ export default function Preview() {
           <div className="fixed top-0 left-0 right-0 bg-white shadow z-50 px-4 py-3 flex justify-between items-center">
             <Button
               variant="ghost"
-              onClick={() => setShowPreview(false)}
+              onClick={() => {
+                setShowPreview(false);
+                setPageId(null);
+                setInputPageId('');
+              }}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               戻る
             </Button>
-            <span className="text-sm text-gray-500">
-              文字数: {content.length.toLocaleString()}
-            </span>
+            <div className="flex items-center gap-4">
+              {pageId && (
+                <span className="text-sm text-indigo-600 font-medium">
+                  Page ID: {pageId}
+                </span>
+              )}
+              <span className="text-sm text-gray-500">
+                文字数: {content.length.toLocaleString()}
+              </span>
+            </div>
           </div>
 
           <article className="pt-20 pb-12 px-4">
