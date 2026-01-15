@@ -4,7 +4,6 @@ import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Upload, Loader2, Database } from "lucide-react";
-import { trpc } from "@/lib/trpc";
 
 export default function Preview() {
   const [content, setContent] = useState('');
@@ -14,14 +13,26 @@ export default function Preview() {
   const [pageId, setPageId] = useState<number | null>(null);
   const [inputPageId, setInputPageId] = useState('');
 
-  // TiDBからの記事取得
-  const articleQuery = trpc.articles.getByPageId.useQuery(
-    { pageId: pageId! },
-    {
-      enabled: pageId !== null,
-      retry: false,
+  // TiDBからの記事取得（Serverless API経由）
+  const fetchArticle = async (id: number) => {
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch(`/api/article?id=${id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || '記事の取得に失敗しました');
+      }
+
+      setContent(data.content || '');
+      setShowPreview(true);
+    } catch (err: any) {
+      setError(`記事が見つかりません (Page ID: ${id})`);
+    } finally {
+      setLoading(false);
     }
-  );
+  };
 
   // URLパラメータからの自動読み込み
   useEffect(() => {
@@ -34,7 +45,7 @@ export default function Preview() {
       const numId = parseInt(id);
       if (!isNaN(numId)) {
         setPageId(numId);
-        setLoading(true);
+        fetchArticle(numId);
       }
     }
     // ?url= パラメータ: 外部URLから取得
@@ -58,22 +69,6 @@ export default function Preview() {
         });
     }
   }, []);
-
-  // TiDBクエリの結果を処理
-  useEffect(() => {
-    if (articleQuery.data) {
-      setContent(articleQuery.data.content || '');
-      setShowPreview(true);
-      setLoading(false);
-    }
-    if (articleQuery.error) {
-      setError('記事が見つかりません (Page ID: ' + pageId + ')');
-      setLoading(false);
-    }
-    if (articleQuery.isLoading && pageId !== null) {
-      setLoading(true);
-    }
-  }, [articleQuery.data, articleQuery.error, articleQuery.isLoading, pageId]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,9 +94,8 @@ export default function Preview() {
   const handleSearchById = () => {
     const numId = parseInt(inputPageId);
     if (!isNaN(numId)) {
-      setError('');
       setPageId(numId);
-      setLoading(true);
+      fetchArticle(numId);
     }
   };
 
