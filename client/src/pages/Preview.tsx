@@ -1,13 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Upload } from "lucide-react";
+import { ArrowLeft, FileText, Upload, Loader2 } from "lucide-react";
 
 export default function Preview() {
   const [content, setContent] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  // URLパラメータからの自動読み込み
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const url = params.get('url');
+
+    if (url) {
+      setLoading(true);
+      setError('');
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error('ファイルの取得に失敗しました');
+          return res.json();
+        })
+        .then(data => {
+          setContent(data.content || '');
+          setShowPreview(true);
+          setLoading(false);
+        })
+        .catch(err => {
+          setError(err.message);
+          setLoading(false);
+        });
+    }
+  }, []);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -30,6 +58,16 @@ export default function Preview() {
     }
   };
 
+  // ローディング画面
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
+        <p className="text-gray-600">記事を読み込み中...</p>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gray-100">
       {!showPreview ? (
@@ -38,6 +76,12 @@ export default function Preview() {
             <FileText className="w-8 h-8" />
             V4記事プレビュー
           </h1>
+
+          {error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-4 max-w-md w-full">
+              {error}
+            </div>
+          )}
 
           <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
             <label className="block mb-4">
