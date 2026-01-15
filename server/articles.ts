@@ -12,7 +12,8 @@ const dbConfig = {
   password: process.env.TIDB_PASSWORD || '6KcooGBdpDcmeIGI',
   database: process.env.TIDB_DATABASE || 'test',
   ssl: {
-    rejectUnauthorized: true
+    minVersion: 'TLSv1.2' as const,
+    rejectUnauthorized: false
   }
 };
 
