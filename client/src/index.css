@@ -190,14 +190,31 @@
   font-size: 1.4em;
   color: #333;
   margin-top: 40px;
-  padding-left: 15px;
+  margin-bottom: 20px;
+  padding: 12px 15px;
+  background: linear-gradient(90deg, #f0f4ff 0%, #fafbff 100%);
   border-left: 4px solid #667eea;
+  border-radius: 0 8px 8px 0;
 }
 
 .article-content h3 {
-  font-size: 1.2em;
+  font-size: 1.15em;
   color: #444;
   margin-top: 30px;
+  margin-bottom: 15px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-left: 3px solid #a0aec0;
+  border-radius: 0 6px 6px 0;
+}
+
+.article-content h4 {
+  font-size: 1.05em;
+  color: #555;
+  margin-top: 25px;
+  margin-bottom: 12px;
+  padding-left: 10px;
+  border-left: 2px solid #cbd5e0;
 }
 
 .article-content p {
