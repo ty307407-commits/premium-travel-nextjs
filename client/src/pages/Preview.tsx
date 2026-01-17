@@ -112,7 +112,7 @@ export default function Preview() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white md:bg-gray-100">
       {!showPreview ? (
         <div className="flex flex-col items-center justify-center min-h-screen p-8">
           <h1 className="text-2xl font-bold mb-8 flex items-center gap-2">
@@ -213,8 +213,8 @@ export default function Preview() {
             </div>
           </div>
 
-          <article className="pt-20 pb-12 px-4 sm:px-6 md:px-8">
-            <div className="max-w-3xl mx-auto article-content">
+          <article className="pt-20 pb-12 px-4 md:px-8">
+            <div className="max-w-3xl mx-auto article-content md:bg-white md:rounded-xl md:shadow-lg md:p-8 lg:p-12">
               <ReactMarkdown
                 rehypePlugins={[rehypeRaw]}
                 remarkPlugins={[remarkGfm]}
