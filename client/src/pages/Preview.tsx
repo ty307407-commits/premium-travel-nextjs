@@ -102,7 +102,7 @@ export default function Preview() {
   // ローディング画面
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+      <main className="min-h-screen bg-white flex flex-col items-center justify-center">
         <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
         <p className="text-gray-600">
           {pageId ? `ページID ${pageId} の記事を読み込み中...` : '記事を読み込み中...'}
@@ -112,7 +112,7 @@ export default function Preview() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100">
+    <main className="min-h-screen bg-white">
       {!showPreview ? (
         <div className="flex flex-col items-center justify-center min-h-screen p-8">
           <h1 className="text-2xl font-bold mb-8 flex items-center gap-2">
@@ -213,8 +213,8 @@ export default function Preview() {
             </div>
           </div>
 
-          <article className="pt-20 pb-12 px-4">
-            <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 md:p-12 article-content">
+          <article className="pt-20 pb-12 px-4 sm:px-6 md:px-8">
+            <div className="max-w-3xl mx-auto article-content">
               <ReactMarkdown
                 rehypePlugins={[rehypeRaw]}
                 remarkPlugins={[remarkGfm]}
