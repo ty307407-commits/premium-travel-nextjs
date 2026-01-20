@@ -115,3 +115,4 @@ server_backup/
 api_backup/
 *.backup
 credentials/
+scripts/v4/.env
