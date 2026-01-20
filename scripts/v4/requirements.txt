@@ -1,0 +1,4 @@
+python-dotenv>=1.0.0
+mysql-connector-python>=8.0.0
+google-cloud-aiplatform>=1.38.0
+google-auth>=2.0.0
