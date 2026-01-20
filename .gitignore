@@ -104,3 +104,6 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+
+# 認証情報（ローカルのみ）
+docs/CREDENTIALS.md
