@@ -119,7 +119,43 @@ mysql://4VWXcjUowH2PPCE.root:6KcooGBdpDcmeIGI@gateway01.ap-northeast-1.prod.aws.
 
 ---
 
-## Colab接続スクリプト
+## Data API（HTTP経由でアクセス可能）
+
+TiDB Cloud Data Service を使用して、HTTP API経由でデータベースにアクセスできます。
+
+### API情報
+
+| 項目 | 値 |
+|------|-----|
+| App ID | `dataapp-pgnDYdcU` |
+| Base URL | `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-pgnDYdcU/endpoint/` |
+| Public Key | `S2R9M3V0` |
+| Private Key | `8cc2d2cd-7567-422a-a9d1-8a96b5643286` |
+
+### 利用可能なエンドポイント
+
+| エンドポイント | メソッド | 用途 |
+|--------------|---------|------|
+| `/active_themes` | GET | 使用中テーマ一覧（91件） |
+| `/page_data_summary` | GET | page_data全件サマリー（3,831件） |
+| `/tables` | GET | テーブル一覧 |
+| `/test` | GET | page_data件数 |
+
+### curlでのアクセス例
+
+```bash
+# 使用中テーマ一覧を取得
+curl -s "https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-pgnDYdcU/endpoint/active_themes" \
+  -H "Authorization: Basic $(echo -n 'S2R9M3V0:8cc2d2cd-7567-422a-a9d1-8a96b5643286' | base64)"
+
+# page_data全件を取得
+curl -s "https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-pgnDYdcU/endpoint/page_data_summary" \
+  -H "Authorization: Basic $(echo -n 'S2R9M3V0:8cc2d2cd-7567-422a-a9d1-8a96b5643286' | base64)"
+```
+
+---
+
+## Colab接続スクリプト（直接MySQL接続）
 
 ```python
 !pip install pymysql
