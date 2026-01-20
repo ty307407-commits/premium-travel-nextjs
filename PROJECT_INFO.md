@@ -1,373 +1,215 @@
-# Premium Travel Japan - 技術詳細情報
+# Premium Travel Japan - プロジェクト概要
 
-**最終更新**: 2025年11月8日 08:30 JST
+**最終更新**: 2026年1月20日
+**本番URL**: https://www.premium-travel-japan.com
 
 ---
 
-## 📦 GitHubリポジトリ情報
+## 🎯 プロジェクト概要
 
-### このリポジトリ
-- **URL**: https://github.com/ty307407-commits/premium-travel-nextjs
-- **役割**: サイト作成に伴う実際のコード等の保管
-- **Personal Access Token**: 環境変数 `GITHUB_TOKEN` として管理
+40代・50代夫婦向けの温泉旅行情報サイト。人生の節目（昇進、退職、結婚記念日など）に合わせた温泉旅行プランを提案。
 
-### ドキュメント管理リポジトリ
-- **URL**: https://github.com/ty307407-commits/project-document-management-system
-- **役割**: 作業の引き継ぎ、進行状況の保管
+### 主要機能
+- **91テーマ**の温泉旅行プラン
+- **3,831ページ**の個別コンテンツ（312温泉地 × テーマ）
+- 楽天トラベルAPIによるホテル情報表示
+- SEO最適化されたURL構造
 
 ---
 
 ## 🔧 技術スタック
 
-### フロントエンド
-- **React**: 19.1.1
-- **TypeScript**: 5.9.3
-- **Vite**: 7.1.9
-- **TailwindCSS**: 4.x
-- **shadcn/ui**: 最新版
-- **React Router**: wouter
-- **State Management**: @tanstack/react-query v5.90.7
-
-### バックエンド
-- **Node.js**: 22.13.0
-- **Express**: 4.x
-- **tRPC**: 11.7.1
-- **Superjson**: 1.13.3（Date型のシリアライズ）
-
-### データベース
-- **PostgreSQL**: Manus提供
-- **ORM**: Drizzle ORM 0.44.5
-- **Migration**: drizzle-kit 0.31.4
-
-### API統合
-- **Google Sheets API**: googleapis
-- **Rakuten Travel API**: REST API
-- **Gemini AI**: gemini-2.0-flash-exp
+| カテゴリ | 技術 |
+|---------|------|
+| フレームワーク | Next.js 14 (App Router) |
+| 言語 | TypeScript |
+| スタイル | Tailwind CSS |
+| データベース | TiDB Cloud (MySQL互換) |
+| ホテルAPI | 楽天トラベルAPI |
+| ホスティング | Vercel |
+| ドメイン | premium-travel-japan.com |
 
 ---
 
-## 🗂️ プロジェクト構造
+## 📁 プロジェクト構造
 
 ```
 premium-travel-nextjs/
-├── client/                    # フロントエンド
-│   ├── public/               # 静的ファイル
-│   └── src/
-│       ├── pages/            # ページコンポーネント
-│       │   ├── Home.tsx
-│       │   ├── Hakone.tsx    # 箱根ページ（実装中）
-│       │   └── NotFound.tsx
-│       ├── components/       # 再利用可能なコンポーネント
-│       │   └── ui/          # shadcn/ui コンポーネント
-│       ├── lib/             # ユーティリティ
-│       │   ├── trpc.ts      # tRPCクライアント
-│       │   └── trpc-provider.tsx
-│       ├── App.tsx          # ルーティング
-│       └── main.tsx         # エントリーポイント
+├── app/                      # Next.js App Router
+│   ├── layout.tsx           # ルートレイアウト
+│   ├── page.tsx             # トップページ（テーマ一覧）
+│   ├── globals.css          # グローバルスタイル
+│   └── [...slug]/           # 動的ルート（コンテンツページ）
+│       └── page.tsx
 │
-├── server/                   # バックエンド
-│   ├── _core/               # フレームワークコア
-│   │   └── index.ts         # サーバーエントリーポイント
-│   ├── googlesheets.ts      # Google Sheets API クライアント
-│   ├── rakuten.ts           # Rakuten Travel API クライアント
-│   ├── router.ts            # tRPC ルーター定義
-│   ├── trpc.ts              # tRPC 初期化
-│   └── db.ts                # データベース操作（予定）
+├── lib/                      # ユーティリティ
+│   ├── tidb.ts              # TiDB Data API クライアント
+│   └── rakuten.ts           # 楽天トラベルAPI クライアント
 │
-├── drizzle/                 # データベース
-│   ├── schema.ts            # スキーマ定義
-│   └── migrations/          # マイグレーションファイル
+├── docs/                     # ドキュメント
+│   ├── CREDENTIALS.md       # 認証情報（.gitignore）
+│   └── CREDENTIALS_TEMPLATE.md
 │
-├── shared/                  # 共有型定義
-│   └── const.ts            # 共有定数
+├── generated/               # 生成されたテストページ
 │
-├── package.json            # 依存関係
-├── vite.config.ts          # Vite設定
-├── drizzle.config.ts       # Drizzle設定
-└── tsconfig.json           # TypeScript設定
+├── next.config.js           # Next.js設定
+├── tailwind.config.js       # Tailwind設定
+├── vercel.json              # Vercel設定
+└── package.json
 ```
 
 ---
 
-## 🔑 API認証情報
+## 🗄️ データベース（TiDB Cloud）
 
-### Google Sheets API
-- **認証ファイル**: `/home/ubuntu/upload/gen-lang-client-0978608719-8ac8ccf348c6.json`
-- **スプレッドシートID**: `1IuNe90BEjsFGLpCxF8sGbmuHDizlUhkoh803ukXdjYs`
-- **シート名**:
-  - `Content_Templates`: コンテンツテンプレート（43件）
-  - `OnsenAreas`: 温泉地情報
-  - `Themes`: テーマ情報（235件）
+### 接続情報
 
-### Rakuten Travel API
-- **エンドポイント**: `https://app.rakuten.co.jp/services/api/Travel/SimpleHotelSearch/20170426`
-- **環境変数**: 
-  - `RAKUTEN_APPLICATION_ID`: 楽天APIアプリケーションID
-  - `RAKUTEN_AFFILIATE_ID`: 楽天アフィリエイトID
-- **箱根エリアコード**:
-  - `largeClassCode`: `japan`
-  - `middleClassCode`: `kanagawa`
-  - `smallClassCode`: `hakone`
+**Data API（HTTP経由）**
+- App ID: `dataapp-pgnDYdcU`
+- Base URL: `https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-pgnDYdcU/endpoint/`
 
-### Gemini AI
-- **環境変数**: `GEMINI_API_KEY`
-- **モデル**: `gemini-2.0-flash-exp`
-- **レート制限**: 10リクエスト/分
+### エンドポイント一覧
 
----
+| エンドポイント | メソッド | 用途 | パラメータ |
+|--------------|---------|------|------------|
+| `/active_themes` | GET | 使用中テーマ一覧（91件） | - |
+| `/page_data_summary` | GET | page_data全件（3,831件） | - |
+| `/rakuten_areas` | GET | 楽天エリアマスタ（312件） | - |
+| `/page_with_area` | GET | ページ+楽天エリアコード | - |
+| `/page_detail` | GET | 特定ページの詳細取得 | `page_id` (INT) |
+| `/page_by_slug` | GET | スラッグでページ検索 | `slug` (STRING) |
+| `/random_pages` | GET | ランダムページ取得 | `limit_count` (INT) |
 
-## 📊 データベーススキーマ
+### テーブル構成
 
-### generated_contents テーブル
-```typescript
-export const generatedContents = mysqlTable("generated_contents", {
-  id: int("id").autoincrement().primaryKey(),
-  regionName: varchar("region_name", { length: 100 }).notNull(),
-  themeName: varchar("theme_name", { length: 100 }).notNull(),
-  hotelNo: int("hotel_no"),
-  hotelName: varchar("hotel_name", { length: 200 }),
-  templateId: varchar("template_id", { length: 10 }).notNull(),
-  templateName: varchar("template_name", { length: 100 }).notNull(),
-  content: text("content").notNull(),
-  wordCount: int("word_count").notNull(),
-  generatedAt: timestamp("generated_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-});
-```
-
-### hotels テーブル
-```typescript
-export const hotels = mysqlTable("hotels", {
-  id: int("id").autoincrement().primaryKey(),
-  hotelNo: int("hotel_no").notNull().unique(),
-  hotelName: varchar("hotel_name", { length: 200 }).notNull(),
-  hotelImageUrl: varchar("hotel_image_url", { length: 500 }),
-  hotelMinCharge: int("hotel_min_charge"),
-  address1: varchar("address1", { length: 100 }),
-  address2: varchar("address2", { length: 200 }),
-  access: text("access"),
-  hotelInformationUrl: varchar("hotel_information_url", { length: 500 }),
-  reviewAverage: int("review_average"),
-  reviewCount: int("review_count"),
-  hotelSpecial: text("hotel_special"),
-  regionName: varchar("region_name", { length: 100 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-});
-```
+| テーブル | 件数 | 用途 |
+|---------|------|------|
+| themes | 241件 | テーママスタ |
+| page_data | 3,831件 | ページデータ |
+| hotels | 12,154件 | ホテル情報 |
+| onsen_areas | 493件 | 温泉エリア情報 |
+| rakuten_area_master | 312件 | 楽天エリアコード |
 
 ---
 
-## 🚀 開発環境
+## 🌐 URL構造
 
-### サーバー構成
-- **バックエンド**: ポート 3000（Express + tRPC）
-- **フロントエンド開発サーバー**: Vite（開発時のみ）
-- **tRPCエンドポイント**: `/api/trpc`
+### トップページ
+```
+https://www.premium-travel-japan.com/
+```
+91テーマを一覧表示
 
-### 環境変数（.env）
-```bash
-# Database
-DATABASE_URL=mysql://...
-
-# Rakuten API
-RAKUTEN_APPLICATION_ID=...
-RAKUTEN_AFFILIATE_ID=...
-
-# Gemini AI
-GEMINI_API_KEY=...
-
-# Manus System (自動設定)
-JWT_SECRET=...
-VITE_APP_ID=...
-OAUTH_SERVER_URL=...
-VITE_OAUTH_PORTAL_URL=...
+### コンテンツページ
+```
+https://www.premium-travel-japan.com/{theme-slug}/{area-slug}/
 ```
 
-### 起動コマンド
+例：
+- `/midlife-onsen-trip/shima-onsen-2/` - 四万温泉×人生後半戦記念
+- `/tokyo-2hr-secret-onsen/hakone/` - 箱根×都心から2時間以内
+- `/long-service-onsen-trip/atami/` - 熱海×長年勤続感謝
+
+URLスラッグは `page_data.url_slug` に保存されています。
+
+---
+
+## 🏨 楽天トラベルAPI
+
+### 設定情報
+- Application ID: `1029472204308393704`
+- エンドポイント: `https://app.rakuten.co.jp/services/api/Travel/SimpleHotelSearch/20170426`
+
+### エリアコード
+`rakuten_area_master` テーブルで管理：
+- `prefecture_code`: 都道府県コード（例: `gunma`）
+- `area_code`: エリアコード（例: `shimaonsen`）
+
+---
+
+## 🚀 デプロイ
+
+### Vercel設定
+- Framework: Next.js（自動検出）
+- Production Branch: `main`
+- ドメイン: `premium-travel-japan.com`, `www.premium-travel-japan.com`
+
+### デプロイ手順
+1. `main` ブランチにマージ
+2. Vercelが自動デプロイ
+3. 約1-2分で本番反映
+
+---
+
+## 📝 開発フロー
+
+### ローカル開発
 ```bash
 # 依存関係インストール
-pnpm install
+npm install
 
-# 開発サーバー起動（バックエンド + フロントエンド）
-pnpm dev
-
-# データベースマイグレーション
-pnpm db:push
+# 開発サーバー起動
+npm run dev
 
 # ビルド
-pnpm build
-
-# 型チェック
-pnpm check
+npm run build
 ```
 
----
-
-## 🔌 tRPC API定義
-
-### sheets ルーター
-```typescript
-sheets: router({
-  getContentTemplates: publicProcedure.query(),
-  getOnsenArea: publicProcedure
-    .input(z.object({ areaCode: z.string() }))
-    .query(),
-  getThemes: publicProcedure.query(),
-})
-```
-
-### rakuten ルーター
-```typescript
-rakuten: router({
-  searchHotels: publicProcedure
-    .input(z.object({
-      largeClassCode: z.string(),
-      middleClassCode: z.string(),
-      smallClassCode: z.string(),
-    }))
-    .query(),
-})
-```
-
-### フロントエンドでの使用例
-```typescript
-// Google Sheetsからテンプレート取得
-const { data: templates } = trpc.sheets.getContentTemplates.useQuery();
-
-// 楽天APIからホテル検索
-const { data: hotels } = trpc.rakuten.searchHotels.useQuery({
-  largeClassCode: 'japan',
-  middleClassCode: 'kanagawa',
-  smallClassCode: 'hakone',
-});
-```
-
----
-
-## 📝 開発フェーズ
-
-### Phase 1: Google Sheets API統合 ✅
-- googleapis パッケージインストール
-- `server/googlesheets.ts` 作成
-- データ取得テスト成功（43 templates, 235 themes）
-- **Checkpoint**: `3aaacc77`
-
-### Phase 2: データベース設計 ✅
-- PostgreSQL + Drizzle ORM
-- スキーマ定義（generated_contents, hotels）
-- マイグレーション実行
-- **Checkpoint**: `0c6cfa75`
-
-### Phase 3: Rakuten Travel API統合 ✅
-- `server/rakuten.ts` 作成
-- 箱根ホテルデータ取得成功（5件）
-- **Checkpoint**: `b41bd38a`
-
-### Phase 4: tRPCサーバーセットアップ ✅
-- tRPC 11.7.1 インストール
-- `server/router.ts` 作成
-- フロントエンド・バックエンド型安全性確立
-- **Checkpoint**: `5624f175`
-
-### Phase 5: 箱根ページ実装（進行中）
-- `client/src/pages/Hakone.tsx` 作成
-- ホテル一覧表示
-- 画像、価格、評価表示
-- **現在**: 開発環境の修正中
-
-### Phase 6: Gemini AI統合（未着手）
-- コンテンツ生成ロジック
-- テンプレートベース生成
-- DB保存機能
-
-### Phase 7: 11,800ページ自動生成（未着手）
-- バッチ生成スクリプト
-- 並列処理実装
-- 進捗管理
-
-### Phase 8: 本番環境デプロイ（未着手）
-- ビルドテスト
-- Management UI Publishボタンでデプロイ
-
----
-
-## ⚠️ 既知の問題
-
-### 1. 開発環境の構造問題
-**問題**: web-static と web-db-user テンプレートの混在
-**影響**: サーバーが正しく起動しない
-**対策**: 現在修正中
-
-### 2. Gemini APIレート制限
-**問題**: 10リクエスト/分の制限
-**影響**: 17件のコンテンツ生成に約2.5分
-**対策**: 
-- リトライロジック実装予定
-- バッチ生成で事前にDB保存
-
-### 3. 文字数制限の遵守
-**問題**: Geminiが指定文字数を超える場合がある
-**対策**:
-- プロンプトで厳密な文字数指定
-- 生成後に文字数チェック
-
----
-
-## 🔧 トラブルシューティング
-
-### サーバーが起動しない
+### Git運用
 ```bash
-# 依存関係を再インストール
-rm -rf node_modules pnpm-lock.yaml
-pnpm install
+# 作業ブランチで開発
+git checkout -b claude/feature-name-XXXXX
 
-# .envファイルを確認
-cat .env
+# コミット・プッシュ
+git add .
+git commit -m "Add feature"
+git push -u origin claude/feature-name-XXXXX
 
-# server/_core/index.ts の存在確認
-ls -la server/_core/
-```
-
-### フロントエンドが表示されない
-```bash
-# ブラウザのコンソールエラーを確認
-# tRPCクライアント設定を確認
-cat client/src/lib/trpc-provider.tsx
-```
-
-### データベース接続エラー
-```bash
-# DATABASE_URL を確認
-echo $DATABASE_URL
-
-# マイグレーションを実行
-pnpm db:push
+# PRを作成してmainにマージ
 ```
 
 ---
 
-## 📚 参考リンク
+## ✅ 完了済み作業
 
-- [Google Sheets API Documentation](https://developers.google.com/sheets/api)
-- [Rakuten Travel API Documentation](https://webservice.rakuten.co.jp/documentation/travel-simple-hotel-search)
-- [tRPC Documentation](https://trpc.io/)
-- [Drizzle ORM Documentation](https://orm.drizzle.team/)
-- [Vite Documentation](https://vitejs.dev/)
-- [React Documentation](https://react.dev/)
-
----
-
-## 🎯 次のステップ
-
-1. 開発環境の修正完了
-2. 箱根ページの実装完了
-3. Gemini AI統合
-4. 自動生成システム構築
-5. 本番デプロイ
+| 日付 | 作業内容 |
+|------|----------|
+| 2026-01-20 | TiDB Cloud Data API接続確立 |
+| 2026-01-20 | エンドポイント作成（8個） |
+| 2026-01-20 | Vite → Next.js App Router移行 |
+| 2026-01-20 | Vercelデプロイ・ドメイン設定 |
+| 2026-01-20 | SEO対応URL構造実装 |
 
 ---
 
-**作成者**: Manus AI Agent  
-**最終更新**: 2025年11月8日 08:30 JST  
-**次回セッション開始時**: このファイルを確認してから作業開始
+## 🔜 今後の作業
+
+1. **コンテンツ生成**: 3,831ページのMarkdownコンテンツをGemini AIで生成
+2. **デザイン改善**: ヘッダー・フッター・カード等のスタイル調整
+3. **パフォーマンス最適化**: 画像最適化、キャッシュ戦略
+4. **アナリティクス**: Google Analytics / Search Console設定
+
+---
+
+## 🔗 関連リンク
+
+- **本番サイト**: https://www.premium-travel-japan.com
+- **GitHubリポジトリ**: https://github.com/ty307407-commits/premium-travel-nextjs
+- **ドキュメント管理**: https://github.com/ty307407-commits/project-document-management-system
+- **TiDB Cloud**: https://tidbcloud.com/
+- **Vercel**: https://vercel.com/
+
+---
+
+## 📞 認証情報
+
+認証情報（APIキー等）は以下で管理：
+- **ローカル**: `docs/CREDENTIALS.md`（.gitignoreで除外）
+- **バックアップ**: `project-document-management-system` リポジトリ
+
+新規セッション開始時は `docs/CREDENTIALS.md` を確認してください。
+
+---
+
+**最終更新者**: Claude Code
+**最終更新日**: 2026年1月20日
