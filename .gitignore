@@ -107,3 +107,4 @@ temp/
 
 # 認証情報（ローカルのみ）
 docs/CREDENTIALS.md
+scripts/push_credentials_to_docs_repo.py
