@@ -419,62 +419,40 @@ def _generate_html_output(result: Dict) -> str:
 
 def _save_to_database(result: Dict, page_id: int) -> bool:
     """
-    記事をTiDBに保存
+    記事をTiDB Data APIで保存
 
     Returns:
         保存成功: True, 失敗: False
     """
-    import mysql.connector
+    import base64
+    import requests
+
+    # TiDB Data API設定
+    TIDB_API_BASE = "https://ap-northeast-1.data.tidbcloud.com/api/v1beta/app/dataapp-pgnDYdcU/endpoint"
+    TIDB_AUTH = base64.b64encode(b'S2R9M3V0:8cc2d2cd-7567-422a-a9d1-8a96b5643286').decode()
+
+    content = result.get('content', '')
+    url = f"{TIDB_API_BASE}/save_page_content"
+    payload = {"page_id": int(page_id), "content": content}
 
     try:
-        conn = mysql.connector.connect(
-            host=os.getenv('TIDB_HOST', 'gateway01.ap-northeast-1.prod.aws.tidbcloud.com'),
-            port=int(os.getenv('TIDB_PORT', 4000)),
-            user=os.getenv('TIDB_USER', '4VWXcjUowH2PPCE.root'),
-            password=os.getenv('TIDB_PASSWORD', '6KcooGBdpDcmeIGI'),
-            database=os.getenv('TIDB_DATABASE', 'test'),  # 正しいDB名
-            ssl_ca=os.getenv('TIDB_SSL_CA', '/etc/ssl/certs/ca-certificates.crt')
+        response = requests.post(
+            url,
+            json=payload,
+            headers={
+                "Authorization": f"Basic {TIDB_AUTH}",
+                "Content-Type": "application/json"
+            },
+            timeout=60
         )
-        cursor = conn.cursor()
 
-        # 既存のdraft記事を確認
-        cursor.execute(
-            "SELECT id FROM articles WHERE page_id = %s AND status = 'draft'",
-            (page_id,)
-        )
-        existing = cursor.fetchone()
-
-        content = result.get('content', '')
-        title = result.get('title', '')
-        meta_description = result.get('meta_description', '')
-        selected_hotels = json.dumps(result.get('selected_hotels', []))
-        word_count = len(content)
-
-        if existing:
-            # 既存のdraftを更新
-            cursor.execute("""
-                UPDATE articles SET
-                    title = %s,
-                    content = %s,
-                    meta_description = %s,
-                    selected_hotels = %s,
-                    word_count = %s,
-                    generated_at = NOW()
-                WHERE id = %s
-            """, (title, content, meta_description, selected_hotels, word_count, existing[0]))
-            print(f"✅ 既存の下書きを更新しました (article_id: {existing[0]})")
+        if response.status_code == 200:
+            print(f"✅ TiDB Data APIに保存: page_id={page_id}")
+            return True
         else:
-            # 新規作成
-            cursor.execute("""
-                INSERT INTO articles (page_id, status, title, content, meta_description, selected_hotels, word_count)
-                VALUES (%s, 'draft', %s, %s, %s, %s, %s)
-            """, (page_id, title, content, meta_description, selected_hotels, word_count))
-            print(f"✅ 新規下書きを作成しました (article_id: {cursor.lastrowid})")
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return True
+            print(f"❌ Data API保存エラー: {response.status_code}")
+            print(response.text)
+            return False
 
     except Exception as e:
         print(f"❌ データベース保存エラー: {e}")
