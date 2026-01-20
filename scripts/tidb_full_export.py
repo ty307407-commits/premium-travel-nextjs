@@ -32,7 +32,7 @@ CONFIG = {
     'host': 'gateway01.ap-northeast-1.prod.aws.tidbcloud.com',
     'port': 4000,
     'user': '4VWXcjUowH2PPCE.root',
-    'password': 'cDRDyvsJTMHJdiR7',
+    'password': '6KcooGBdpDcmeIGI',
     'database': 'test',
     'ssl': {'ssl': {}}
 }
