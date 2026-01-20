@@ -69,3 +69,8 @@ export async function getPagesByTheme(themeId: number): Promise<PageData[]> {
   const allPages = await fetchTiDB<PageData[]>('/page_with_area')
   return allPages.filter(page => page.theme_id === String(themeId))
 }
+
+export async function getPageBySlug(slug: string): Promise<PageData | null> {
+  const rows = await fetchTiDB<PageData[]>('/page_by_slug', { slug })
+  return rows[0] || null
+}

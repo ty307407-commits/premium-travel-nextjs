@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { getPageDetail } from '@/lib/tidb'
+import { getPageBySlug } from '@/lib/tidb'
 import { searchHotels, Hotel } from '@/lib/rakuten'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -11,21 +11,20 @@ export const dynamic = 'force-dynamic'
 
 interface PageProps {
   params: {
-    theme: string
-    slug: string
+    slug: string[]
   }
+}
+
+// URLパスからスラッグを構築
+function buildSlug(slugParts: string[]): string {
+  return '/' + slugParts.join('/') + '/'
 }
 
 // 動的メタデータ生成（SEO用）
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  // URLスラッグからページIDを取得する仕組みが必要
-  // 暫定的にpage_idをslugとして使用
-  const pageId = parseInt(params.slug.replace('page-', ''))
-  if (isNaN(pageId)) {
-    return { title: 'ページが見つかりません' }
-  }
+  const slug = buildSlug(params.slug)
+  const page = await getPageBySlug(slug)
 
-  const page = await getPageDetail(pageId)
   if (!page) {
     return { title: 'ページが見つかりません' }
   }
@@ -85,12 +84,9 @@ function HotelCard({ hotel }: { hotel: Hotel }) {
 }
 
 export default async function ContentPage({ params }: PageProps) {
-  const pageId = parseInt(params.slug.replace('page-', ''))
-  if (isNaN(pageId)) {
-    notFound()
-  }
+  const slug = buildSlug(params.slug)
+  const page = await getPageBySlug(slug)
 
-  const page = await getPageDetail(pageId)
   if (!page) {
     notFound()
   }
