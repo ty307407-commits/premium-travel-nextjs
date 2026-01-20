@@ -1,8 +1,9 @@
+// @ts-ignore
+import cors from "cors";
 import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
-import cors from "cors";
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { appRouter } from './router';
 
