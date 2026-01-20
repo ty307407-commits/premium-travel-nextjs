@@ -238,18 +238,34 @@ def process_article(content: str, hotels: List[Dict]) -> str:
 
 def save_to_tidb(page_id: str, content: str, title: str) -> bool:
     """TiDB Data APIで記事を保存"""
-    # 注: page_by_slugエンドポイントはGETのみなので、
-    # 保存用のエンドポイントを作成する必要があります
-    # 今は生成結果をファイルに保存します
+    url = f"{TIDB_API_BASE}/save_page_content"
 
-    output_file = f'/home/user/premium-travel-nextjs/generated/page_{page_id}_v4.md'
-    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    payload = {
+        "page_id": int(page_id),
+        "content": content
+    }
 
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write(content)
+    try:
+        response = requests.post(
+            url,
+            json=payload,
+            headers={
+                "Authorization": f"Basic {TIDB_AUTH}",
+                "Content-Type": "application/json"
+            },
+            timeout=60
+        )
 
-    print(f"✅ 保存: {output_file}")
-    return True
+        if response.status_code == 200:
+            print(f"✅ TiDBに保存: page_id={page_id}")
+            return True
+        else:
+            print(f"❌ 保存エラー: {response.status_code}")
+            print(response.text)
+            return False
+    except Exception as e:
+        print(f"❌ 保存例外: {e}")
+        return False
 
 
 def main():
