@@ -114,3 +114,4 @@ client_backup/
 server_backup/
 api_backup/
 *.backup
+credentials/
