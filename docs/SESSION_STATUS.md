@@ -97,18 +97,24 @@ result = generator.generate_for_page(page_id=897)
 
 ## 次のタスク（未完了）
 
-1. **Next.js への移行**
-   - 現在: Vite + React (SPA)
-   - 目標: Next.js App Router (SSG/SSR)
-   - 理由: SEO対応、静的生成、パフォーマンス向上
+### 最重要：Next.js への移行
+- 現在: Vite + React (SPA)
+- 目標: Next.js App Router (SSG/SSR)
+- **現在の記事生成の品質をそのまま維持してNext.jsに移行すること**
 
-2. **URL Slug対応**
-   - 現在: `/preview?id=897`
-   - 目標: `/area/izu-kogen/theme-name` のようなSEOフレンドリーURL
+### URL Slug対応
+- 現在: `/preview?id=897`
+- 目標: `/area/izu-kogen/theme-name` のようなSEOフレンドリーURL
+- データベースの `url_slug` フィールドを活用
 
-3. **一括記事生成**
-   - Colabで複数ページを一括生成
-   - TiDBに保存
+### SEO・クリック率向上
+- テーマタイトルに「厳選○選」などの言葉を含める
+- 例: 「【伊豆高原】昇進祝いにおすすめの温泉旅館｜厳選5選」
+- ユーザーの目を引くタイトル設計
+
+### 一括記事生成
+- Colabで複数ページを一括生成
+- TiDBに保存
 
 ---
 
