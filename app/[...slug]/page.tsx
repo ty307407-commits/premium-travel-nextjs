@@ -27,17 +27,34 @@ export default function ArticlePage() {
       setLoading(true);
       setError("");
       try {
-        const response = await fetch(
-          `/api/article-by-slug?slug=${encodeURIComponent(fullSlug)}`
-        );
-        const data = await response.json();
+        // Step 1: slugからpage_idを取得
+        const slugsResponse = await fetch("/api/slugs");
+        const slugsData = await slugsResponse.json();
 
-        if (!response.ok) {
-          throw new Error(data.error || "記事の取得に失敗しました");
+        if (!slugsResponse.ok) {
+          throw new Error("ページ情報の取得に失敗しました");
         }
 
-        setContent(data.content || "");
-        setTitle(data.title || "");
+        const pageInfo = slugsData.slugs?.find(
+          (s: { url_slug: string }) => s.url_slug === fullSlug
+        );
+
+        if (!pageInfo) {
+          throw new Error("ページが見つかりません");
+        }
+
+        // Step 2: page_idで記事を取得
+        const articleResponse = await fetch(
+          `/api/article?id=${pageInfo.page_id}`
+        );
+        const articleData = await articleResponse.json();
+
+        if (!articleResponse.ok) {
+          throw new Error(articleData.error || "記事の取得に失敗しました");
+        }
+
+        setContent(articleData.content || "");
+        setTitle(articleData.title || "");
       } catch (err: unknown) {
         const errorMessage =
           err instanceof Error ? err.message : "記事が見つかりません";
