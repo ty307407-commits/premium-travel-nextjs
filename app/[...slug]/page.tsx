@@ -36,7 +36,11 @@ export default function ArticlePage() {
         }
 
         const pageInfo = slugsData.slugs?.find(
-          (s: { url_slug: string }) => s.url_slug === fullSlug
+          (s: { url_slug: string }) => {
+            // スラッシュを正規化して比較
+            const normalizedDbSlug = s.url_slug.replace(/^\/|\/$/g, "");
+            return normalizedDbSlug === fullSlug;
+          }
         );
 
         if (!pageInfo) {
