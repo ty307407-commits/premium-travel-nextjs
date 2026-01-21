@@ -1,33 +1,35 @@
-import { useState, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
+"use client";
+
+import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Upload, Loader2, Database } from "lucide-react";
 
-export default function Preview() {
-  const [content, setContent] = useState('');
+export default function PreviewPage() {
+  const [content, setContent] = useState("");
   const [showPreview, setShowPreview] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [pageId, setPageId] = useState<number | null>(null);
-  const [inputPageId, setInputPageId] = useState('');
+  const [inputPageId, setInputPageId] = useState("");
 
   // TiDBからの記事取得（Serverless API経由）
   const fetchArticle = async (id: number) => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const response = await fetch(`/api/article?id=${id}`);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || '記事の取得に失敗しました');
+        throw new Error(data.error || "記事の取得に失敗しました");
       }
 
-      setContent(data.content || '');
+      setContent(data.content || "");
       setShowPreview(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(`記事が見つかりません (Page ID: ${id})`);
     } finally {
       setLoading(false);
@@ -37,8 +39,8 @@ export default function Preview() {
   // URLパラメータからの自動読み込み
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const url = params.get('url');
-    const id = params.get('id');
+    const url = params.get("url");
+    const id = params.get("id");
 
     // ?id= パラメータ: TiDBから取得
     if (id) {
@@ -51,19 +53,19 @@ export default function Preview() {
     // ?url= パラメータ: 外部URLから取得
     else if (url) {
       setLoading(true);
-      setError('');
+      setError("");
 
       fetch(url)
-        .then(res => {
-          if (!res.ok) throw new Error('ファイルの取得に失敗しました');
+        .then((res) => {
+          if (!res.ok) throw new Error("ファイルの取得に失敗しました");
           return res.json();
         })
-        .then(data => {
-          setContent(data.content || '');
+        .then((data) => {
+          setContent(data.content || "");
           setShowPreview(true);
           setLoading(false);
         })
-        .catch(err => {
+        .catch((err) => {
           setError(err.message);
           setLoading(false);
         });
@@ -76,15 +78,15 @@ export default function Preview() {
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
-          if (file.name.endsWith('.json')) {
+          if (file.name.endsWith(".json")) {
             const json = JSON.parse(event.target?.result as string);
-            setContent(json.content || '');
+            setContent(json.content || "");
           } else {
             setContent(event.target?.result as string);
           }
           setShowPreview(true);
-        } catch (error) {
-          alert('ファイルの読み込みに失敗しました');
+        } catch {
+          alert("ファイルの読み込みに失敗しました");
         }
       };
       reader.readAsText(file);
@@ -105,7 +107,9 @@ export default function Preview() {
       <main className="min-h-screen bg-white flex flex-col items-center justify-center">
         <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
         <p className="text-gray-600">
-          {pageId ? `ページID ${pageId} の記事を読み込み中...` : '記事を読み込み中...'}
+          {pageId
+            ? `ページID ${pageId} の記事を読み込み中...`
+            : "記事を読み込み中..."}
         </p>
       </main>
     );
@@ -140,7 +144,7 @@ export default function Preview() {
                   value={inputPageId}
                   className="flex-1 p-2 border rounded-lg text-sm"
                   onChange={(e) => setInputPageId(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearchById()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearchById()}
                 />
                 <Button onClick={handleSearchById} disabled={!inputPageId}>
                   取得
@@ -167,9 +171,7 @@ export default function Preview() {
               />
             </label>
 
-            <div className="mt-6 text-center text-gray-500 text-sm">
-              または
-            </div>
+            <div className="mt-6 text-center text-gray-500 text-sm">または</div>
 
             <textarea
               placeholder="記事のMarkdown/HTMLをここに貼り付け..."
@@ -194,7 +196,7 @@ export default function Preview() {
               onClick={() => {
                 setShowPreview(false);
                 setPageId(null);
-                setInputPageId('');
+                setInputPageId("");
               }}
               className="flex items-center gap-2"
             >
