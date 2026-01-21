@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
+// Force dynamic rendering - this endpoint must query the database at runtime
+export const dynamic = "force-dynamic";
+
 // TiDB接続設定
 const dbConfig = {
   host:
