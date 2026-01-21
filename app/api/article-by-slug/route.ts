@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // page_dataテーブルからslugでpage_idを取得
     const [pageRows] = await connection.execute<mysql.RowDataPacket[]>(
-      `SELECT id, url_slug, theme_id, onsen_area_id
+      `SELECT id, url_slug, theme_id
        FROM page_data
        WHERE url_slug = ?
        LIMIT 1`,
