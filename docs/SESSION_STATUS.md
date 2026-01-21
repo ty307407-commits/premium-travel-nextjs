@@ -12,6 +12,7 @@
 - [x] GitHub Actions CI + Auto-merge 設定
 - [x] Vercelデプロイ成功 (`premium-travel-v2`)
 - [x] Colabでの記事生成動作確認済み
+- [x] **Next.js App Routerへの移行完了**
 
 ### 動作確認済みURL
 - **プレビュー**: https://premium-travel-v2.vercel.app/preview?id=897
@@ -19,34 +20,41 @@
 
 ---
 
-## プロジェクト構成
+## プロジェクト構成（Next.js移行後）
 
 ```
 premium-travel-nextjs/
-├── api/                    # Vercel Serverless Functions
-│   └── article.ts          # TiDBから記事取得API
-├── client/                 # フロントエンド（Vite + React）
-│   └── src/pages/
-│       └── Preview.tsx     # 記事プレビューページ
+├── app/                    # Next.js App Router
+│   ├── layout.tsx          # ルートレイアウト
+│   ├── page.tsx            # ホームページ
+│   ├── globals.css         # グローバルスタイル（Tailwind CSS 4）
+│   ├── preview/
+│   │   └── page.tsx        # 記事プレビューページ
+│   └── api/
+│       └── article/
+│           └── route.ts    # TiDBから記事取得API
+├── components/
+│   └── ui/                 # shadcn/ui コンポーネント（60+）
+├── hooks/                  # カスタムフック
+│   ├── useComposition.ts
+│   ├── useMobile.tsx
+│   └── usePersistFn.ts
+├── lib/
+│   └── utils.ts            # ユーティリティ（cn関数）
 ├── scripts/
 │   └── v4/                 # V4記事生成スクリプト（Colab用）
-│       ├── generate_article_v4.py   # メインスクリプト
+│       ├── generate_article_v4.py
 │       ├── modules/
-│       │   ├── hotel_fetcher.py     # ホテルデータ取得
-│       │   ├── gemini_client.py     # Gemini API
-│       │   └── post_processor.py    # 後処理
 │       ├── prompts/
-│       │   └── master_prompt.py     # プロンプト生成
 │       └── config/
-│           └── settings.py          # 設定
-├── server/                 # バックエンドサーバー
 ├── docs/                   # ドキュメント
-│   ├── CREDENTIALS_TEMPLATE.md
-│   └── SESSION_STATUS.md   # このファイル
-├── vercel.json             # Vercel設定
+├── next.config.js          # Next.js設定
+├── postcss.config.js       # PostCSS設定
+├── tsconfig.json           # TypeScript設定
+├── vercel.json             # Vercel設定（framework: nextjs）
 └── .github/workflows/      # CI/CD
-    ├── ci.yml              # ビルド・テスト
-    └── auto-merge.yml      # 自動マージ
+    ├── ci.yml
+    └── auto-merge.yml
 ```
 
 ---
@@ -97,15 +105,11 @@ result = generator.generate_for_page(page_id=897)
 
 ## 次のタスク（未完了）
 
-### 最重要：Next.js への移行
-- 現在: Vite + React (SPA)
-- 目標: Next.js App Router (SSG/SSR)
-- **現在の記事生成の品質をそのまま維持してNext.jsに移行すること**
-
-### URL Slug対応
+### URL Slug対応（SSG）
 - 現在: `/preview?id=897`
 - 目標: `/area/izu-kogen/theme-name` のようなSEOフレンドリーURL
 - データベースの `url_slug` フィールドを活用
+- Next.js の `generateStaticParams` で SSG 実装
 
 ### SEO・クリック率向上
 - テーマタイトルに「厳選○選」などの言葉を含める
