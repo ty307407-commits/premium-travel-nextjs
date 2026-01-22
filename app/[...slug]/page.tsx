@@ -45,7 +45,7 @@ async function getArticleBySlug(slug: string): Promise<ArticleData | null> {
     // slugからpage_idを取得
     const [pageRows] = await connection.execute<mysql.RowDataPacket[]>(
       `SELECT id as page_id, url_slug, hero_image_url
-       FROM pages
+       FROM page_data
        WHERE url_slug LIKE ?`,
       [`%${slug}%`]
     );
