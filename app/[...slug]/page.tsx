@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+// Force dynamic rendering - this page must query the database at runtime
+export const dynamic = "force-dynamic";
+
 // 記事データの型定義
 interface ArticleData {
   id: number;
