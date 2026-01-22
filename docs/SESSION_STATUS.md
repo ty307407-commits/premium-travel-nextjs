@@ -80,7 +80,7 @@ premium-travel-nextjs/
 - Database: `test`
 
 ### Gemini API
-- Key: `AIzaSyDdUFyY8Rmwx2blpmd9IkK4xMNbpBCR94E`
+- Key: `（Colabで直接設定してください - GitHubには保存しない）`
 
 ### 楽天アフィリエイト
 - Affiliate ID: `12426598.beaffa49.12426599.e0b47e86`
@@ -103,7 +103,7 @@ os.environ['TIDB_PORT'] = '4000'
 os.environ['TIDB_USER'] = '4VWXcjUowH2PPCE.root'
 os.environ['TIDB_PASSWORD'] = '6KcooGBdpDcmeIGI'
 os.environ['TIDB_DATABASE'] = 'test'
-os.environ['GEMINI_API_KEY'] = 'AIzaSyDdUFyY8Rmwx2blpmd9IkK4xMNbpBCR94E'
+os.environ['GEMINI_API_KEY'] = 'YOUR_GEMINI_API_KEY'  # Google AI Studioで取得
 os.environ['RAKUTEN_AFFILIATE_ID'] = '12426598.beaffa49.12426599.e0b47e86'
 
 # 記事生成
