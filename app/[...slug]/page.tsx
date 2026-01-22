@@ -1,93 +1,168 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import mysql from "mysql2/promise";
+import ArticleContent from "./ArticleContent";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
-export default function ArticlePage() {
-  const params = useParams();
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+// 記事データの型定義
+interface ArticleData {
+  id: number;
+  page_id: number;
+  status: string;
+  title: string;
+  content: string;
+  meta_description: string;
+  word_count: number;
+  generated_at: Date;
+  hero_image_url?: string;
+}
 
-  // URLからslugを取得
-  const slugArray = params.slug as string[];
-  const fullSlug = slugArray ? slugArray.join("/") : "";
+// TiDB接続設定
+const dbConfig = {
+  host:
+    process.env.TIDB_HOST || "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
+  port: parseInt(process.env.TIDB_PORT || "4000"),
+  user: process.env.TIDB_USER || "4VWXcjUowH2PPCE.root",
+  password: process.env.TIDB_PASSWORD || "6KcooGBdpDcmeIGI",
+  database: process.env.TIDB_DATABASE || "test",
+  ssl: {
+    minVersion: "TLSv1.2" as const,
+    rejectUnauthorized: false,
+  },
+};
 
-  useEffect(() => {
-    if (!fullSlug) return;
+// 記事データを取得する関数
+async function getArticleBySlug(slug: string): Promise<ArticleData | null> {
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
 
-    const fetchArticle = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        // Step 1: slugからpage_idを取得
-        const slugsResponse = await fetch("/api/slugs");
-        const slugsData = await slugsResponse.json();
-
-        if (!slugsResponse.ok) {
-          throw new Error("ページ情報の取得に失敗しました");
-        }
-
-        const pageInfo = slugsData.slugs?.find(
-          (s: { url_slug: string }) => {
-            // スラッシュを正規化して比較
-            const normalizedDbSlug = s.url_slug.replace(/^\/|\/$/g, "");
-            return normalizedDbSlug === fullSlug;
-          }
-        );
-
-        if (!pageInfo) {
-          throw new Error("ページが見つかりません");
-        }
-
-        // Step 2: page_idで記事を取得
-        const articleResponse = await fetch(
-          `/api/article?id=${pageInfo.page_id}`
-        );
-        const articleData = await articleResponse.json();
-
-        if (!articleResponse.ok) {
-          throw new Error(articleData.error || "記事の取得に失敗しました");
-        }
-
-        setContent(articleData.content || "");
-        setTitle(articleData.title || "");
-      } catch (err: unknown) {
-        const errorMessage =
-          err instanceof Error ? err.message : "記事が見つかりません";
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticle();
-  }, [fullSlug]);
-
-  // ローディング画面
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-white flex flex-col items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
-        <p className="text-gray-600">記事を読み込み中...</p>
-      </main>
+    // slugからpage_idを取得
+    const [pageRows] = await connection.execute<mysql.RowDataPacket[]>(
+      `SELECT id as page_id, url_slug, hero_image_url
+       FROM pages
+       WHERE url_slug LIKE ?`,
+      [`%${slug}%`]
     );
+
+    if (pageRows.length === 0) {
+      return null;
+    }
+
+    // スラッシュを正規化して比較
+    const pageInfo = pageRows.find((row) => {
+      const normalizedDbSlug = row.url_slug.replace(/^\/|\/$/g, "");
+      return normalizedDbSlug === slug;
+    });
+
+    if (!pageInfo) {
+      return null;
+    }
+
+    // 記事を取得
+    const [articleRows] = await connection.execute<mysql.RowDataPacket[]>(
+      `SELECT id, page_id, status, title, content, meta_description, word_count, generated_at
+       FROM articles
+       WHERE page_id = ?
+       ORDER BY FIELD(status, 'draft', 'published'), generated_at DESC
+       LIMIT 1`,
+      [pageInfo.page_id]
+    );
+
+    if (articleRows.length === 0) {
+      return null;
+    }
+
+    return {
+      id: articleRows[0].id,
+      page_id: articleRows[0].page_id,
+      status: articleRows[0].status,
+      title: articleRows[0].title,
+      content: articleRows[0].content,
+      meta_description: articleRows[0].meta_description,
+      word_count: articleRows[0].word_count,
+      generated_at: articleRows[0].generated_at,
+      hero_image_url: pageInfo.hero_image_url,
+    } as ArticleData;
+  } catch (error) {
+    console.error("Database error:", error);
+    return null;
+  } finally {
+    if (connection) {
+      await connection.end();
+    }
+  }
+}
+
+// SEOメタデータを動的に生成
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const fullSlug = resolvedParams.slug?.join("/") || "";
+  const article = await getArticleBySlug(fullSlug);
+
+  if (!article) {
+    return {
+      title: "ページが見つかりません | プレミアムトラベル",
+    };
   }
 
-  // エラー画面
-  if (error) {
+  const baseUrl = "https://www.premium-travel-japan.com";
+
+  return {
+    title: article.title || "プレミアムトラベル",
+    description:
+      article.meta_description ||
+      "高級温泉旅館の厳選ガイド。露天風呂付き客室で特別な時間を。",
+    openGraph: {
+      title: article.title,
+      description: article.meta_description,
+      url: `${baseUrl}/${fullSlug}`,
+      siteName: "プレミアムトラベル",
+      images: article.hero_image_url
+        ? [
+            {
+              url: article.hero_image_url,
+              width: 1200,
+              height: 630,
+              alt: article.title,
+            },
+          ]
+        : [],
+      locale: "ja_JP",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.meta_description,
+      images: article.hero_image_url ? [article.hero_image_url] : [],
+    },
+  };
+}
+
+// ページコンポーネント
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}) {
+  const resolvedParams = await params;
+  const fullSlug = resolvedParams.slug?.join("/") || "";
+  const article = await getArticleBySlug(fullSlug);
+
+  // 記事が見つからない場合
+  if (!article) {
     return (
       <main className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
         <div className="bg-red-50 text-red-600 p-6 rounded-lg mb-6 max-w-md w-full text-center">
           <p className="font-medium mb-2">エラー</p>
-          <p>{error}</p>
+          <p>ページが見つかりません</p>
           <p className="text-sm mt-2 text-gray-500">URL: /{fullSlug}</p>
         </div>
         <Link href="/">
@@ -100,32 +175,5 @@ export default function ArticlePage() {
     );
   }
 
-  return (
-    <main className="min-h-screen bg-white md:bg-gray-100">
-      <div className="fixed top-0 left-0 right-0 bg-white shadow z-50 px-4 py-3 flex justify-between items-center">
-        <Link href="/">
-          <Button variant="ghost" className="flex items-center gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            ホーム
-          </Button>
-        </Link>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-indigo-600 font-medium truncate max-w-[200px]">
-            /{fullSlug}
-          </span>
-          <span className="text-sm text-gray-500">
-            文字数: {content.length.toLocaleString()}
-          </span>
-        </div>
-      </div>
-
-      <article className="pt-20 pb-12 px-4 md:px-8">
-        <div className="max-w-3xl mx-auto article-content md:bg-white md:rounded-xl md:shadow-lg md:p-8 lg:p-12">
-          <ReactMarkdown rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>
-            {content}
-          </ReactMarkdown>
-        </div>
-      </article>
-    </main>
-  );
+  return <ArticleContent content={article.content || ""} slug={fullSlug} />;
 }
