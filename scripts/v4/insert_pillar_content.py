@@ -967,19 +967,18 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 # =====================================================
 
 # A: 働いている世代向け（30-50代）の画像設定
-# Cloudflareでは A01_xxx.webp のような命名規則
-# ※実際のファイル名に合わせて更新してください
+# Cloudflare R2の実際のファイル名
 IMAGES_WORKING_COUPLES = {
-    "img_A01_main": "A01_main.webp",           # A-1. メインビジュアル
-    "img_A02_rotenburo": "A02_rotenburo.webp", # A-2. 露天風呂付き客室
-    "img_A03_kodure": "A03_kodure.webp",       # A-3. 子連れ温泉旅行
-    "img_A04_surprise": "A04_surprise.webp",   # A-4. サプライズ演出
-    "img_A05_dinner": "A05_dinner.webp",       # A-5. 記念日ディナー
-    "img_A06_sanpo": "A06_sanpo.webp",         # A-6. 温泉街散策
-    "img_A07_departure": "A07_departure.webp", # A-7. 週末旅行の出発
-    "img_A08_asaburo": "A08_asaburo.webp",     # A-8. 朝風呂の風景
-    "img_A09_letter": "A09_letter.webp",       # A-9. 手紙を書くシーン
-    "img_A10_outro": "A10_outro.webp",         # A-10. 記事締めくくり
+    "img_A01_main": "A01_main_visual.png",           # A-1. メインビジュアル
+    "img_A02_rotenburo": "A02_private_rotenburo.png", # A-2. 露天風呂付き客室
+    "img_A03_kodure": "A03_family_trip.png",          # A-3. 子連れ温泉旅行
+    "img_A04_surprise": "A04_anniversary_surprise.png", # A-4. サプライズ演出
+    "img_A05_dinner": "A05_kaiseki_dinner.png",       # A-5. 記念日ディナー
+    "img_A06_sanpo": "A06_onsen_town_walk.png",       # A-6. 温泉街散策
+    "img_A07_departure": "A07_train_departure.png",   # A-7. 週末旅行の出発
+    "img_A08_asaburo": "A08_morning_bath.png",        # A-8. 朝風呂の風景
+    "img_A09_letter": "A09_writing_letter.png",       # A-9. 手紙を書くシーン
+    "img_A10_outro": "A10_couple_back_view.png",      # A-10. 記事締めくくり
 }
 
 # 監修者画像（両記事共通）
@@ -1077,7 +1076,7 @@ def main():
                     page_title='結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド',
                     content=content,
                     meta_description='結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。',
-                    hero_image_url=build_image_url('A', 'A01_main.webp') if args.with_images else None
+                    hero_image_url=build_image_url('A', 'A01_main_visual.png') if args.with_images else None
                 )
                 results.append(('working', result))
                 print(f"✅ 働いている世代向けガイドを挿入しました: {result}")
