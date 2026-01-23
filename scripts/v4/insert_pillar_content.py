@@ -504,6 +504,44 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ---
 
+## この記事の監修者
+
+<div class="supervisors-section" style="display:flex; flex-direction:column; gap:24px; margin:30px 0;">
+
+<div class="supervisor-card" style="display:flex; gap:16px; padding:20px; background:#fafafa; border-radius:12px; border-left:4px solid #667eea;">
+<img src="{img_author_fujiwara}" alt="藤原 美湯" style="width:80px; height:80px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+<div>
+<h4 style="margin:0 0 4px 0; font-size:1.1em; color:#333;">藤原 美湯（ふじわら みゆ）</h4>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#667eea; font-weight:500;">温泉ソムリエマスター / 温泉観光士</p>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#555; line-height:1.6;">群馬県草津町の温泉旅館に生まれ、幼少期から温泉に親しむ。温泉ソムリエマスター取得後、全国500箇所以上の温泉地を訪問。泉質と健康効果の専門家として、メディア出演・執筆活動を行う。</p>
+<p style="margin:0; font-size:0.85em; color:#888; font-style:italic;">「温泉は日本が誇る天然の薬湯。正しい知識で、もっと健康に美しく」</p>
+</div>
+</div>
+
+<div class="supervisor-card" style="display:flex; gap:16px; padding:20px; background:#fafafa; border-radius:12px; border-left:4px solid #667eea;">
+<img src="{img_author_tanaka}" alt="田中 誠一" style="width:80px; height:80px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+<div>
+<h4 style="margin:0 0 4px 0; font-size:1.1em; color:#333;">田中 誠一（たなか せいいち）</h4>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#667eea; font-weight:500;">大手旅行会社 国内旅行事業部 シニアマネージャー</p>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#555; line-height:1.6;">旅行業界30年以上のキャリアを持ち、記念日旅行・シニア向け旅行の企画を得意とする。年間3,000組以上の夫婦旅行をプロデュースし、きめ細やかな提案力で高いリピート率を誇る。</p>
+<p style="margin:0; font-size:0.85em; color:#888; font-style:italic;">「旅は人生を豊かにする投資。大切な記念日を最高の思い出に」</p>
+</div>
+</div>
+
+<div class="supervisor-card" style="display:flex; gap:16px; padding:20px; background:#fafafa; border-radius:12px; border-left:4px solid #667eea;">
+<img src="{img_author_kobayashi}" alt="小林 香織" style="width:80px; height:80px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+<div>
+<h4 style="margin:0 0 4px 0; font-size:1.1em; color:#333;">小林 香織（こばやし かおり）</h4>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#667eea; font-weight:500;">トラベルライター / 元旅行情報誌編集長</p>
+<p style="margin:0 0 8px 0; font-size:0.9em; color:#555; line-height:1.6;">大手出版社で旅行情報誌の編集長を務めた後、独立。年間100軒以上の宿に宿泊取材し、女性ならではの視点で旅の魅力を伝える。自身も結婚25年、毎年の記念日温泉旅行が夫婦円満の秘訣。</p>
+<p style="margin:0; font-size:0.85em; color:#888; font-style:italic;">「良い旅は、良い情報から。『行ってみたい』を『行ってよかった』に」</p>
+</div>
+</div>
+
+</div>
+
+---
+
 【メタディスクリプション】
 結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。忙しい毎日だからこそ、ふたりだけの特別な時間を。
 """
@@ -944,6 +982,14 @@ IMAGES_WORKING_COUPLES = {
     "img_A10_outro": "A10_outro.webp",         # A-10. 記事締めくくり
 }
 
+# 監修者画像（両記事共通）
+# onsen-images/authors/ にファイル名に名前が含まれる形で保存
+IMAGES_AUTHORS = {
+    "img_author_fujiwara": "fujiwara_miyu.webp",   # 藤原 美湯
+    "img_author_tanaka": "tanaka_seiichi.webp",    # 田中 誠一
+    "img_author_kobayashi": "kobayashi_kaori.webp", # 小林 香織
+}
+
 # B: シニア世代向け（60代以上）の画像設定
 # Cloudflareでは B01_xxx.webp のような命名規則
 # ※実際のファイル名に合わせて更新してください
@@ -962,10 +1008,15 @@ IMAGES_SENIORS = {
 
 
 def build_image_url(folder: str, filename: str) -> str:
-    """Cloudflare R2の画像URLを構築"""
+    """Cloudflare R2の画像URLを構築（記事画像用）"""
     # パス内のスペースをURLエンコード
     encoded_path = IMAGE_PATH.replace(' ', '%20')
     return f"{CLOUDFLARE_BASE_URL}/{encoded_path}/{folder}/{filename}"
+
+
+def build_author_image_url(filename: str) -> str:
+    """Cloudflare R2の監修者画像URLを構築"""
+    return f"{CLOUDFLARE_BASE_URL}/onsen-images/authors/{filename}"
 
 
 def apply_images_to_content(content: str, images: dict, folder: str) -> str:
@@ -973,6 +1024,14 @@ def apply_images_to_content(content: str, images: dict, folder: str) -> str:
     for placeholder, filename in images.items():
         image_url = build_image_url(folder, filename)
         # マークダウン形式の画像プレースホルダーを実際のURLに置換
+        content = content.replace(f"{{{placeholder}}}", image_url)
+    return content
+
+
+def apply_author_images(content: str) -> str:
+    """コンテンツに監修者画像URLを適用"""
+    for placeholder, filename in IMAGES_AUTHORS.items():
+        image_url = build_author_image_url(filename)
         content = content.replace(f"{{{placeholder}}}", image_url)
     return content
 
@@ -1002,6 +1061,7 @@ def main():
             content = GUIDE_WORKING_COUPLES
             if args.with_images:
                 content = apply_images_to_content(content, IMAGES_WORKING_COUPLES, 'A')
+                content = apply_author_images(content)
 
             if args.dry_run:
                 print("=" * 60)
@@ -1027,6 +1087,7 @@ def main():
             content = GUIDE_SENIORS
             if args.with_images:
                 content = apply_images_to_content(content, IMAGES_SENIORS, 'B')
+                content = apply_author_images(content)
 
             if args.dry_run:
                 print("\n" + "=" * 60)
