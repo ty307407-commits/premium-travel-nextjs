@@ -998,9 +998,9 @@ IMAGES_SENIORS = {
     "img_B04_renpaku": "B04_leisurely_reading.webp",  # B-4. 連泊を楽しむシニア夫婦
     "img_B05_breakfast": "B05_healthy_breakfast.webp", # B-5. 健康的な朝食
     "img_B06_sanpo": "B06_slow_walk.webp",            # B-6. 温泉街をゆっくり散歩
-    "img_B07_sansedai": "B07_sansedai.webp",          # B-7. 三世代旅行 (TODO: ファイル未確認)
+    "img_B07_sansedai": "B07_three_generations.webp",  # B-7. 三世代旅行
     "img_B08_health": "B08_therapeutic_bath.webp",   # B-8. 療養・健康目的の入浴
-    "img_B09_kanreki": "B09_kanreki.webp",            # B-9. 還暦祝い (TODO: ファイル未確認)
+    "img_B09_kanreki": "B09_kanreki_celebration.webp", # B-9. 還暦祝い
     "img_B10_outro": "B10_sunset_elderly.webp",      # B-10. 記事締めくくり
 }
 
