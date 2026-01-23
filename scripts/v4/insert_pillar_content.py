@@ -1094,7 +1094,7 @@ def build_author_image_url(filename: str) -> str:
     """Cloudflare R2の監修者画像URLを構築"""
     # スペースをURLエンコード
     encoded_filename = filename.replace(' ', '%20')
-    return f"{CLOUDFLARE_BASE_URL}/onsen-images/authors/{encoded_filename}"
+    return f"{CLOUDFLARE_BASE_URL}/authors/{encoded_filename}"
 
 
 def apply_images_to_content(content: str, images: dict) -> str:
