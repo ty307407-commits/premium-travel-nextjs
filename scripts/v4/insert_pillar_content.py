@@ -982,27 +982,26 @@ IMAGES_WORKING_COUPLES = {
 }
 
 # 監修者画像（両記事共通）
-# onsen-images/authors/ にファイル名に名前が含まれる形で保存
+# onsen-images/authors/ に保存（ファイル名にスペースあり）
 IMAGES_AUTHORS = {
-    "img_author_fujiwara": "fujiwara_miyu.webp",   # 藤原 美湯
-    "img_author_tanaka": "tanaka_seiichi.webp",    # 田中 誠一
-    "img_author_kobayashi": "kobayashi_kaori.webp", # 小林 香織
+    "img_author_fujiwara": "miyu fujiwara.webp",     # 藤原 美湯
+    "img_author_tanaka": "seiichi tanaka.webp",      # 田中 誠一
+    "img_author_kobayashi": "kaori kobayashi.webp",  # 小林 香織
 }
 
 # B: シニア世代向け（60代以上）の画像設定
-# Cloudflareでは B01_xxx.webp のような命名規則
-# ※実際のファイル名に合わせて更新してください
+# Cloudflare R2の実際のファイル名
 IMAGES_SENIORS = {
-    "img_B01_main": "B01_main.webp",           # B-1. メインビジュアル
-    "img_B02_kinkon": "B02_kinkon.webp",       # B-2. 金婚式のお祝い
-    "img_B03_barrierfree": "B03_barrierfree.webp", # B-3. バリアフリー対応の客室
-    "img_B04_renpaku": "B04_renpaku.webp",     # B-4. 連泊を楽しむシニア夫婦
-    "img_B05_breakfast": "B05_breakfast.webp", # B-5. 健康的な朝食
-    "img_B06_sanpo": "B06_sanpo.webp",         # B-6. 温泉街をゆっくり散歩
-    "img_B07_sansedai": "B07_sansedai.webp",   # B-7. 三世代旅行
-    "img_B08_health": "B08_health.webp",       # B-8. 療養・健康目的の入浴
-    "img_B09_kanreki": "B09_kanreki.webp",     # B-9. 還暦祝い
-    "img_B10_outro": "B10_outro.webp",         # B-10. 記事締めくくり
+    "img_B01_main": "B01_main_visual_senior.webp",    # B-1. メインビジュアル
+    "img_B02_kinkon": "B02_golden_anniversary.webp",  # B-2. 金婚式のお祝い
+    "img_B03_barrierfree": "B03_accessible_room.webp", # B-3. バリアフリー対応の客室
+    "img_B04_renpaku": "B04_leisurely_reading.webp",  # B-4. 連泊を楽しむシニア夫婦
+    "img_B05_breakfast": "B05_healthy_breakfast.webp", # B-5. 健康的な朝食
+    "img_B06_sanpo": "B06_slow_walk.webp",            # B-6. 温泉街をゆっくり散歩
+    "img_B07_sansedai": "B07_sansedai.webp",          # B-7. 三世代旅行 (TODO: ファイル未確認)
+    "img_B08_health": "B08_therapeutic_bath.webp",   # B-8. 療養・健康目的の入浴
+    "img_B09_kanreki": "B09_kanreki.webp",            # B-9. 還暦祝い (TODO: ファイル未確認)
+    "img_B10_outro": "B10_sunset_elderly.webp",      # B-10. 記事締めくくり
 }
 
 
@@ -1015,7 +1014,9 @@ def build_image_url(folder: str, filename: str) -> str:
 
 def build_author_image_url(filename: str) -> str:
     """Cloudflare R2の監修者画像URLを構築"""
-    return f"{CLOUDFLARE_BASE_URL}/onsen-images/authors/{filename}"
+    # スペースをURLエンコード
+    encoded_filename = filename.replace(' ', '%20')
+    return f"{CLOUDFLARE_BASE_URL}/onsen-images/authors/{encoded_filename}"
 
 
 def apply_images_to_content(content: str, images: dict, folder: str) -> str:
@@ -1102,7 +1103,7 @@ def main():
                     page_title='60代からの結婚記念日温泉旅行｜ゆとりある時間を楽しむ大人の宿選びと過ごし方',
                     content=content,
                     meta_description='60代からの結婚記念日温泉旅行ガイド。銀婚式・金婚式にふさわしい宿の選び方、シニア夫婦におすすめの温泉地、バリアフリー対応のポイントまで。',
-                    hero_image_url=build_image_url('B', 'B01_main.webp') if args.with_images else None
+                    hero_image_url=build_image_url('B', 'B01_main_visual_senior.webp') if args.with_images else None
                 )
                 results.append(('seniors', result))
                 print(f"✅ シニア世代向けガイドを挿入しました: {result}")
