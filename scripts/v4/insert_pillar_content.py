@@ -19,7 +19,7 @@ load_dotenv()
 
 # Cloudflare R2 画像ベースURL
 CLOUDFLARE_BASE_URL = "https://pub-b953f613e39f4e5ea2f7b7a0e48c659b.r2.dev"
-IMAGE_PATH = "onsen-images/Wedding anniversary onsen guide"
+IMAGE_PATH = "Wedding anniversary onsen guide"
 
 
 class PillarContentInserter:
@@ -1005,11 +1005,11 @@ IMAGES_SENIORS = {
 }
 
 
-def build_image_url(folder: str, filename: str) -> str:
+def build_image_url(filename: str) -> str:
     """Cloudflare R2の画像URLを構築（記事画像用）"""
     # パス内のスペースをURLエンコード
     encoded_path = IMAGE_PATH.replace(' ', '%20')
-    return f"{CLOUDFLARE_BASE_URL}/{encoded_path}/{folder}/{filename}"
+    return f"{CLOUDFLARE_BASE_URL}/{encoded_path}/{filename}"
 
 
 def build_author_image_url(filename: str) -> str:
@@ -1019,10 +1019,10 @@ def build_author_image_url(filename: str) -> str:
     return f"{CLOUDFLARE_BASE_URL}/onsen-images/authors/{encoded_filename}"
 
 
-def apply_images_to_content(content: str, images: dict, folder: str) -> str:
+def apply_images_to_content(content: str, images: dict) -> str:
     """コンテンツに画像URLを適用"""
     for placeholder, filename in images.items():
-        image_url = build_image_url(folder, filename)
+        image_url = build_image_url(filename)
         # マークダウン形式の画像プレースホルダーを実際のURLに置換
         content = content.replace(f"{{{placeholder}}}", image_url)
     return content
@@ -1060,7 +1060,7 @@ def main():
         if args.type in ['working', 'both']:
             content = GUIDE_WORKING_COUPLES
             if args.with_images:
-                content = apply_images_to_content(content, IMAGES_WORKING_COUPLES, 'A')
+                content = apply_images_to_content(content, IMAGES_WORKING_COUPLES)
                 content = apply_author_images(content)
 
             if args.dry_run:
@@ -1077,7 +1077,7 @@ def main():
                     page_title='結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド',
                     content=content,
                     meta_description='結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。',
-                    hero_image_url=build_image_url('A', 'A01_main_visual.png') if args.with_images else None
+                    hero_image_url=build_image_url('A01_main_visual.png') if args.with_images else None
                 )
                 results.append(('working', result))
                 print(f"✅ 働いている世代向けガイドを挿入しました: {result}")
@@ -1086,7 +1086,7 @@ def main():
         if args.type in ['seniors', 'both']:
             content = GUIDE_SENIORS
             if args.with_images:
-                content = apply_images_to_content(content, IMAGES_SENIORS, 'B')
+                content = apply_images_to_content(content, IMAGES_SENIORS)
                 content = apply_author_images(content)
 
             if args.dry_run:
@@ -1103,7 +1103,7 @@ def main():
                     page_title='60代からの結婚記念日温泉旅行｜ゆとりある時間を楽しむ大人の宿選びと過ごし方',
                     content=content,
                     meta_description='60代からの結婚記念日温泉旅行ガイド。銀婚式・金婚式にふさわしい宿の選び方、シニア夫婦におすすめの温泉地、バリアフリー対応のポイントまで。',
-                    hero_image_url=build_image_url('B', 'B01_main_visual_senior.webp') if args.with_images else None
+                    hero_image_url=build_image_url('B01_main_visual_senior.webp') if args.with_images else None
                 )
                 results.append(('seniors', result))
                 print(f"✅ シニア世代向けガイドを挿入しました: {result}")
