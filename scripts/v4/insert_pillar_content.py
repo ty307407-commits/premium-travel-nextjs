@@ -130,6 +130,81 @@ class PillarContentInserter:
             'title': title
         }
 
+    def update_pillar_page(
+        self,
+        url_slug: str,
+        page_title: str,
+        content: str,
+        meta_description: str,
+        hero_image_url: str = None
+    ) -> Dict:
+        """
+        既存のピラーコンテンツページを更新
+
+        Args:
+            url_slug: URLスラッグ（例: guides/wedding-anniversary-working-couples）
+            page_title: ページタイトル
+            content: Markdownコンテンツ
+            meta_description: メタディスクリプション
+            hero_image_url: ヒーロー画像URL
+
+        Returns:
+            更新結果情報
+        """
+        # url_slugの正規化
+        if not url_slug.startswith('/'):
+            url_slug = '/' + url_slug
+
+        # page_dataを検索
+        self.cursor.execute(
+            "SELECT id, page_id FROM page_data WHERE url_slug = %s",
+            (url_slug,)
+        )
+        result = self.cursor.fetchone()
+
+        if not result:
+            raise ValueError(f"ページが見つかりません: {url_slug}")
+
+        page_data_id = result['id']
+        page_id = result['page_id']
+
+        # page_dataを更新
+        self.cursor.execute("""
+            UPDATE page_data SET
+                page_title = %s,
+                meta_description = %s,
+                hero_image_url = %s,
+                updated_at = NOW()
+            WHERE id = %s
+        """, (page_title, meta_description, hero_image_url, page_data_id))
+
+        # タイトルをコンテンツから抽出
+        import re
+        title_match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
+        title = title_match.group(1).strip() if title_match else page_title
+
+        # articlesを更新
+        word_count = len(content)
+        self.cursor.execute("""
+            UPDATE articles SET
+                title = %s,
+                content = %s,
+                meta_description = %s,
+                word_count = %s,
+                generated_at = NOW()
+            WHERE page_id = %s
+        """, (title, content, meta_description, word_count, page_data_id))
+
+        self.conn.commit()
+
+        return {
+            'page_data_id': page_data_id,
+            'page_id': page_id,
+            'url_slug': url_slug,
+            'title': title,
+            'action': 'updated'
+        }
+
 
 def get_image_url(folder: str, filename: str) -> str:
     """Cloudflare R2の画像URLを生成"""
@@ -145,6 +220,8 @@ def get_image_url(folder: str, filename: str) -> str:
 GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド
 
 ## はじめに：忙しい毎日だからこそ、ふたりだけの時間を
+
+![温泉で過ごす夫婦の時間]({img_A01_main})
 
 「今年の結婚記念日、何かしたいけど時間がない...」
 「子どもの世話や仕事で、夫婦でゆっくり過ごすことなんて難しい...」
@@ -163,8 +240,6 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 - 何も予定を入れず、ただそばにいるだけの安らぎ
 
 この記事では、**限られた時間と予算の中でも、最高の結婚記念日を過ごすための温泉旅行ガイド**をお届けします。
-
-![温泉で過ごす夫婦の時間]({img_A01_main})
 
 ---
 
@@ -186,6 +261,8 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ### 1-2. 「露天風呂付き客室」という選択
 
+![露天風呂付き客室でくつろぐ夫婦]({img_A02_rotenburo})
+
 結婚記念日の温泉旅行で、特におすすめしたいのが**露天風呂付き客室**です。
 
 大浴場も素晴らしいのですが、夫婦ふたりでゆっくり過ごすなら、プライベートな空間のある客室露天風呂がベスト。
@@ -195,8 +272,6 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 - 周りを気にせず、ふたりで会話できる
 - チェックインからチェックアウトまで、部屋で完結できる
 - 子連れでないからこそ味わえる「大人だけの贅沢」
-
-![露天風呂付き客室でくつろぐ夫婦]({img_A02_rotenburo})
 
 ### 1-3. 「特別なことをしない」という贅沢
 
@@ -216,9 +291,9 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ## 第2章：結婚記念日におすすめの温泉地ガイド
 
-日本全国には3,000以上の温泉地があると言われています。その中から、「結婚記念日」にふさわしい温泉地をご紹介します。
-
 ![温泉街を散策する夫婦]({img_A06_sanpo})
+
+日本全国には3,000以上の温泉地があると言われています。その中から、「結婚記念日」にふさわしい温泉地をご紹介します。
 
 ### 2-1. 関東から気軽にアクセスできる温泉地
 
@@ -329,6 +404,8 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ### 3-3. 【プレミアムプラン】1泊7万円台〜
 
+![記念日ディナーを楽しむ夫婦]({img_A05_dinner})
+
 **一生の思い出に残る、最高の一日を**
 
 節目の記念日（銀婚式、10周年など）や、「今年は特別に」という年には、思い切って高級旅館を選んでみてはいかがでしょう。
@@ -337,8 +414,6 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 - すべてにおいて「最高」のおもてなし
 - 食材・器・空間すべてにこだわり
 - 夫婦の大切な記念日を特別に演出
-
-![記念日ディナーを楽しむ夫婦]({img_A05_dinner})
 
 ---
 
@@ -354,14 +429,16 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 多くの旅館では、事前にお願いすれば記念日ケーキや花束を用意してくれます。夕食後にサプライズで登場させれば、感動間違いなし。
 
 #### 2. 手紙を書いて渡す
-普段は照れくさくて言えない感謝の気持ち。手紙にして渡せば、きっと一生の宝物になります。
 
 ![手紙を書くシーン]({img_A09_letter})
 
+普段は照れくさくて言えない感謝の気持ち。手紙にして渡せば、きっと一生の宝物になります。
+
 #### 3. 「思い出の写真」をアルバムに
-スマホに眠っている夫婦の写真をアルバムにまとめて、旅先で一緒に見返す——これだけで会話が弾みます。
 
 ![記念日のサプライズ演出]({img_A04_surprise})
+
+スマホに眠っている夫婦の写真をアルバムにまとめて、旅先で一緒に見返す——これだけで会話が弾みます。
 
 ### 4-2. 「結婚○周年」の数え方と、各記念日の意味
 
@@ -410,6 +487,8 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ### 5-2. 子どもの預け先は早めに確保
 
+![子連れでも楽しめる温泉旅行]({img_A03_kodure})
+
 小さなお子さんがいるご家庭では、預け先の確保が最大の関門かもしれません。
 
 **預け先のアイデア：**
@@ -418,8 +497,6 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 - 信頼できるママ友と「預け合い」する
 
 「子どもを預けてまで…」と罪悪感を感じる方もいるかもしれません。でも、**夫婦が仲良しでいることは、子どもにとっても幸せなこと**。たまには自分たちを優先しても、きっと大丈夫です。
-
-![子連れでも楽しめる温泉旅行]({img_A03_kodure})
 
 ### 5-3. 持ち物チェックリスト
 
@@ -449,11 +526,11 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ### Q2. 1泊だけでも満足できる？
 
+![朝風呂を楽しむ風景]({img_A08_asaburo})
+
 **A. はい、十分満足できます。**
 
 「2泊しないと意味がない」なんてことはありません。1泊でも、チェックインから翌朝のチェックアウトまで、たっぷり18時間以上。温泉と食事を堪能し、ゆっくり眠るには十分な時間です。
-
-![朝風呂を楽しむ風景]({img_A08_asaburo})
 
 ### Q3. 記念日に旅行に行く余裕がない場合は？
 
@@ -471,6 +548,8 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 
 ## おわりに：結婚記念日は「夫婦のメンテナンス日」
 
+![温泉旅行を楽しむ夫婦]({img_A10_outro})
+
 車は定期的にオイル交換をしないと、調子が悪くなります。
 庭の木は、剪定をしないと、形が崩れてしまいます。
 
@@ -485,8 +564,6 @@ GUIDE_WORKING_COUPLES = """# 結婚記念日は温泉旅行で特別な時間を
 今年の結婚記念日、温泉旅行を計画してみませんか？
 
 きっと、最高の思い出になるはずです。
-
-![温泉旅行を楽しむ夫婦]({img_A10_outro})
 
 ---
 
@@ -555,6 +632,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ## はじめに：人生の節目を、ふたりで祝う喜び
 
+![ゆったりと温泉を楽しむシニア夫婦]({img_B01_main})
+
 子育てを終え、仕事も一段落。
 60代からの人生は、まさに「自分たちのための時間」が戻ってくる季節です。
 
@@ -572,8 +651,6 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 - 静かな部屋で、昔話に花を咲かせる夜
 
 この記事では、**60代以上のご夫婦が、心から安らげる結婚記念日の温泉旅行**をご提案します。
-
-![ゆったりと温泉を楽しむシニア夫婦]({img_B01_main})
 
 ---
 
@@ -607,6 +684,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ### 1-3. 「バリアフリー」という安心
 
+![バリアフリー対応の客室]({img_B03_barrierfree})
+
 60代以降の旅行では、**宿のバリアフリー対応**も大切なポイントです。
 
 **チェックしたい項目：**
@@ -618,18 +697,16 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 予約時に「足腰に少し不安があるのですが…」と伝えれば、多くの宿が対応してくれます。遠慮せずに相談してみてください。
 
-![バリアフリー対応の客室]({img_B03_barrierfree})
-
 ---
 
 ## 第2章：シニア夫婦におすすめの温泉地
+
+![温泉街をゆっくり散歩するシニア夫婦]({img_B06_sanpo})
 
 「あまり遠くまで行くのは疲れる」
 「でも、せっかくなら良い温泉地に行きたい」
 
 そんな60代以上のご夫婦に、**アクセスが良く、かつ上質な温泉地**をご紹介します。
-
-![温泉街をゆっくり散歩するシニア夫婦]({img_B06_sanpo})
 
 ### 2-1. 関東近郊のおすすめ温泉地
 
@@ -727,6 +804,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ### 3-1. 「食事」で選ぶ
 
+![健康的な朝食を楽しむ]({img_B05_breakfast})
+
 60代以上になると、若い頃のように「量」は食べられなくなるもの。でも、「質」へのこだわりは、むしろ高まっているのではないでしょうか。
 
 **宿選びで確認したいポイント：**
@@ -739,8 +818,6 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 #### アレルギーや苦手な食材への対応
 「生ものが苦手」「甲殻類アレルギーがある」など、事前に伝えておけば対応してくれる宿がほとんどです。
-
-![健康的な朝食を楽しむ]({img_B05_breakfast})
 
 ### 3-2. 「客室」で選ぶ
 
@@ -778,12 +855,12 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ### 4-1. 節目の記念日の過ごし方
 
+![還暦祝いの温泉旅行]({img_B09_kanreki})
+
 長年連れ添った夫婦だからこそ、節目の記念日は特別に祝いたいもの。
 
 **銀婚式（結婚25周年）の過ごし方**
 銀婚式は「夫婦として四半世紀」という大きな節目。少し奮発して、憧れの高級旅館を予約してみてはいかがでしょう。
-
-![還暦祝いの温泉旅行]({img_B09_kanreki})
 
 **真珠婚式（結婚30周年）の過ごし方**
 真珠は「健康と富の象徴」。お互いの健康に感謝しつつ、真珠のように輝く海を望む温泉地を選んでみては。
@@ -792,9 +869,10 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 40年という歳月を共に歩んできた、深い絆。普段は照れくさくて言えない感謝の言葉を、この日だけは伝えてみましょう。
 
 **金婚式（結婚50周年）の過ごし方**
-金婚式は、文字通り「金色に輝く」特別な記念日。家族を招いてのお祝いも素敵ですが、まずは夫婦ふたりで静かにお祝いするのも良いものです。
 
 ![金婚式のお祝い]({img_B02_kinkon})
+
+金婚式は、文字通り「金色に輝く」特別な記念日。家族を招いてのお祝いも素敵ですが、まずは夫婦ふたりで静かにお祝いするのも良いものです。
 
 ### 4-2. 「昔の写真」を持っていく
 
@@ -808,6 +886,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ### 4-3. 「これからの夢」を語り合う
 
+![三世代で楽しむ温泉旅行]({img_B07_sansedai})
+
 60代からの人生は、「第二の人生」とも言われます。
 
 温泉に浸かりながら、これからの夢を語り合ってみませんか。
@@ -817,8 +897,6 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 - 孫との思い出づくり
 - ふたりで続けていきたいこと
 
-![三世代で楽しむ温泉旅行]({img_B07_sansedai})
-
 未来を語ることは、心を若く保つ秘訣でもあります。
 
 ---
@@ -826,6 +904,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 ## 第5章：シニア夫婦の旅行「準備編」
 
 ### 5-1. 無理のないスケジュールを組む
+
+![連泊を楽しむシニア夫婦]({img_B04_renpaku})
 
 若い頃のような「朝から晩まで動き回る」スケジュールは禁物。**余裕を持ったスケジュール**を心がけましょう。
 
@@ -847,9 +927,9 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 「何もしない」ことを恐れず、ゆったりと過ごすのがコツです。
 
-![連泊を楽しむシニア夫婦]({img_B04_renpaku})
-
 ### 5-2. 体調管理のポイント
+
+![療養・健康目的の入浴を楽しむ]({img_B08_health})
 
 温泉旅行を楽しむために、**体調管理**も大切です。
 
@@ -868,8 +948,6 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 - 無理をしない
 - 疲れたら休む
 - お酒は控えめに
-
-![療養・健康目的の入浴を楽しむ]({img_B08_health})
 
 ### 5-3. 持ち物チェックリスト
 
@@ -919,6 +997,8 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 
 ## おわりに：「ありがとう」を伝える旅
 
+![温泉旅行を楽しむシニア夫婦]({img_B10_outro})
+
 60代、70代——
 長い人生を共に歩んできた夫婦には、言葉にしなくても通じ合える絆があります。
 
@@ -938,8 +1018,6 @@ GUIDE_SENIORS = """# 60代からの結婚記念日温泉旅行｜ゆとりある
 それが、何よりの記念日の過ごし方なのかもしれません。
 
 **今年の結婚記念日、温泉旅行で「ありがとう」を伝えてみませんか？**
-
-![温泉旅行を楽しむシニア夫婦]({img_B10_outro})
 
 ---
 
@@ -1045,6 +1123,8 @@ def main():
                         help='実際には挿入せず、内容を確認')
     parser.add_argument('--with-images', action='store_true',
                         help='画像URLを適用する')
+    parser.add_argument('--update', action='store_true',
+                        help='既存のレコードを更新する')
 
     args = parser.parse_args()
 
@@ -1072,15 +1152,26 @@ def main():
                 print("-" * 60)
                 print(content[:1000] + "...")
             else:
-                result = inserter.insert_pillar_page(
-                    url_slug='guides/wedding-anniversary-working-couples',
-                    page_title='結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド',
-                    content=content,
-                    meta_description='結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。',
-                    hero_image_url=build_image_url('A01_main_visual.png') if args.with_images else None
-                )
-                results.append(('working', result))
-                print(f"✅ 働いている世代向けガイドを挿入しました: {result}")
+                if args.update:
+                    result = inserter.update_pillar_page(
+                        url_slug='guides/wedding-anniversary-working-couples',
+                        page_title='結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド',
+                        content=content,
+                        meta_description='結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。',
+                        hero_image_url=build_image_url('A01_main_visual.png') if args.with_images else None
+                    )
+                    results.append(('working', result))
+                    print(f"✅ 働いている世代向けガイドを更新しました: {result}")
+                else:
+                    result = inserter.insert_pillar_page(
+                        url_slug='guides/wedding-anniversary-working-couples',
+                        page_title='結婚記念日は温泉旅行で特別な時間を｜忙しい30〜50代夫婦のための完全ガイド',
+                        content=content,
+                        meta_description='結婚記念日に温泉旅行を計画中の30〜50代夫婦へ。露天風呂付き客室の選び方、おすすめ温泉地、予算別プラン、サプライズアイデアまで完全ガイド。',
+                        hero_image_url=build_image_url('A01_main_visual.png') if args.with_images else None
+                    )
+                    results.append(('working', result))
+                    print(f"✅ 働いている世代向けガイドを挿入しました: {result}")
 
         # シニア世代向けガイド
         if args.type in ['seniors', 'both']:
@@ -1098,19 +1189,31 @@ def main():
                 print("-" * 60)
                 print(content[:1000] + "...")
             else:
-                result = inserter.insert_pillar_page(
-                    url_slug='guides/wedding-anniversary-seniors',
-                    page_title='60代からの結婚記念日温泉旅行｜ゆとりある時間を楽しむ大人の宿選びと過ごし方',
-                    content=content,
-                    meta_description='60代からの結婚記念日温泉旅行ガイド。銀婚式・金婚式にふさわしい宿の選び方、シニア夫婦におすすめの温泉地、バリアフリー対応のポイントまで。',
-                    hero_image_url=build_image_url('B01_main_visual_senior.webp') if args.with_images else None
-                )
-                results.append(('seniors', result))
-                print(f"✅ シニア世代向けガイドを挿入しました: {result}")
+                if args.update:
+                    result = inserter.update_pillar_page(
+                        url_slug='guides/wedding-anniversary-seniors',
+                        page_title='60代からの結婚記念日温泉旅行｜ゆとりある時間を楽しむ大人の宿選びと過ごし方',
+                        content=content,
+                        meta_description='60代からの結婚記念日温泉旅行ガイド。銀婚式・金婚式にふさわしい宿の選び方、シニア夫婦におすすめの温泉地、バリアフリー対応のポイントまで。',
+                        hero_image_url=build_image_url('B01_main_visual_senior.webp') if args.with_images else None
+                    )
+                    results.append(('seniors', result))
+                    print(f"✅ シニア世代向けガイドを更新しました: {result}")
+                else:
+                    result = inserter.insert_pillar_page(
+                        url_slug='guides/wedding-anniversary-seniors',
+                        page_title='60代からの結婚記念日温泉旅行｜ゆとりある時間を楽しむ大人の宿選びと過ごし方',
+                        content=content,
+                        meta_description='60代からの結婚記念日温泉旅行ガイド。銀婚式・金婚式にふさわしい宿の選び方、シニア夫婦におすすめの温泉地、バリアフリー対応のポイントまで。',
+                        hero_image_url=build_image_url('B01_main_visual_senior.webp') if args.with_images else None
+                    )
+                    results.append(('seniors', result))
+                    print(f"✅ シニア世代向けガイドを挿入しました: {result}")
 
         if not args.dry_run and results:
             print("\n" + "=" * 60)
-            print("挿入完了")
+            action = "更新" if args.update else "挿入"
+            print(f"{action}完了")
             print("=" * 60)
             for content_type, result in results:
                 slug = result['url_slug']
