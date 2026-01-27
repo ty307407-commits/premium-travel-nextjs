@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AthReebo - 薬記事ジェネレーター</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.5em;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 0.9em;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: #f8f8f8;
+      padding: 15px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-size: 1em;
+      color: #333;
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 13px;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #2eb67d;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #2eb67d;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1e8e5e;
+    }
+
+    .btn-secondary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a67d8;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-outline:hover {
+      background: #f5f5f5;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .preview-frame {
+      height: 500px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: #666;
+    }
+
+    .tab.active {
+      color: #2eb67d;
+      border-bottom-color: #2eb67d;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .error-message {
+      background: #ffebee;
+      color: #c62828;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .success-message {
+      background: #e8f5e9;
+      color: #2e7d32;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .meta-section {
+      padding: 10px;
+    }
+
+    .meta-group {
+      margin-bottom: 20px;
+    }
+
+    .meta-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 0.9em;
+      color: #333;
+    }
+
+    .char-count {
+      font-weight: normal;
+      font-size: 0.85em;
+      color: #666;
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .char-count.warning {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .char-count.error {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .char-count.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .meta-group input,
+    .meta-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .meta-group input:focus,
+    .meta-group textarea:focus {
+      outline: none;
+      border-color: #2eb67d;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    /* 記事コンテンツのスタイル（CSSを埋め込み） */
+    .article-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      font-size: 16px;
+      line-height: 1.8;
+      color: #333;
+    }
+
+    .article-content * { box-sizing: border-box; }
+    .article-content h1 { font-size: 1.8em; color: #1a1a1a; border-bottom: 3px solid #2eb67d; padding-bottom: 15px; margin: 0 0 25px 0; }
+    .article-content h2 { font-size: 1.4em; color: #333; margin: 50px 0 20px 0; padding: 15px 20px; background: linear-gradient(90deg, #e8f5e9 0%, #f1f8e9 100%); border-left: 5px solid #2eb67d; border-radius: 0 8px 8px 0; }
+    .article-content h3 { font-size: 1.2em; color: #444; margin: 35px 0 15px 0; padding: 10px 15px; background: #f5f5f5; border-left: 4px solid #78909c; border-radius: 0 6px 6px 0; }
+    .article-content p { margin: 1.2em 0; line-height: 2; }
+    .article-content ul, .article-content ol { padding-left: 25px; margin: 1.2em 0; }
+    .article-content li { margin: 10px 0; line-height: 1.8; }
+    .article-content a { color: #2eb67d; text-decoration: none; }
+    .article-content hr { border: none; border-top: 1px dashed #ddd; margin: 40px 0; }
+    .article-content img { max-width: 100%; height: auto; border-radius: 8px; }
+
+    .article-content .category-badge { display: inline-block; background: #2eb67d; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85em; font-weight: bold; margin-bottom: 15px; }
+    .article-content .author-byline { display: flex; align-items: center; gap: 12px; margin: 20px 0 30px 0; padding: 15px; background: #fafafa; border-radius: 10px; border-left: 4px solid #2eb67d; }
+    .article-content .author-byline img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    .article-content .author-byline .info { flex: 1; }
+    .article-content .author-byline .name { font-weight: bold; color: #333; margin: 0 0 3px 0; font-size: 0.95em; }
+    .article-content .author-byline .title { color: #2eb67d; font-size: 0.8em; margin: 0; }
+    .article-content .author-byline .date { color: #888; font-size: 0.8em; }
+    .article-content .eyecatch { width: 100%; margin: 0 0 30px 0; border-radius: 12px; overflow: hidden; }
+    .article-content .eyecatch img { width: 100%; height: auto; display: block; }
+
+    .article-content .toc { background: #f8fdf9; border: 2px solid #c8e6c9; border-radius: 12px; padding: 25px; margin: 30px 0; }
+    .article-content .toc-title { font-size: 1.1em; font-weight: bold; color: #2eb67d; margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 2px dashed #c8e6c9; }
+    .article-content .toc-title::before { content: "📋 "; }
+    .article-content .toc ol { margin: 0; padding-left: 20px; }
+    .article-content .toc li { margin: 8px 0; line-height: 1.6; }
+    .article-content .toc a { color: #555; }
+
+    .article-content .point-box { padding: 20px 25px; border-radius: 12px; margin: 25px 0; }
+    .article-content .point-box.green { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 1px solid #a5d6a7; }
+    .article-content .point-box.blue { background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%); border: 1px solid #90caf9; }
+    .article-content .point-box.yellow { background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%); border: 1px solid #fff59d; }
+    .article-content .point-box.pink { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); border: 1px solid #f48fb1; }
+    .article-content .point-box.gray { background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); border: 1px solid #bdbdbd; }
+    .article-content .point-box-title { font-weight: bold; font-size: 1.05em; margin: 0 0 10px 0; }
+
+    .article-content .warning-box { padding: 20px 25px; border-radius: 12px; margin: 25px 0; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-left: 5px solid #ff9800; }
+    .article-content .warning-box-title { font-weight: bold; color: #e65100; margin: 0 0 10px 0; }
+    .article-content .warning-box-title::before { content: "⚠️ "; }
+
+    .article-content .danger-box { padding: 20px 25px; border-radius: 12px; margin: 25px 0; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 5px solid #f44336; }
+    .article-content .danger-box-title { font-weight: bold; color: #c62828; margin: 0 0 10px 0; }
+    .article-content .danger-box-title::before { content: "🚫 "; }
+
+    .article-content .steps { margin: 30px 0; }
+    .article-content .step { display: flex; gap: 20px; margin: 20px 0; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e8e8e8; }
+    .article-content .step-number { display: flex; align-items: center; justify-content: center; min-width: 50px; height: 50px; background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%); color: white; border-radius: 50%; font-weight: bold; font-size: 1.3em; }
+    .article-content .step-content { flex: 1; }
+    .article-content .step-title { font-weight: bold; font-size: 1.05em; color: #333; margin: 0 0 8px 0; }
+    .article-content .step-desc { color: #555; margin: 0; line-height: 1.7; }
+
+    .article-content .qa-section { margin: 30px 0; }
+    .article-content .qa-item { margin: 20px 0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .article-content .question { display: flex; align-items: flex-start; gap: 15px; padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e9 100%); font-weight: bold; color: #333; }
+    .article-content .question::before { content: "Q"; display: flex; align-items: center; justify-content: center; min-width: 35px; height: 35px; background: #2196f3; color: white; border-radius: 50%; font-weight: bold; }
+    .article-content .answer { display: flex; align-items: flex-start; gap: 15px; padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-top: none; }
+    .article-content .answer::before { content: "A"; display: flex; align-items: center; justify-content: center; min-width: 35px; height: 35px; background: #ff7043; color: white; border-radius: 50%; font-weight: bold; }
+    .article-content .answer-content { flex: 1; }
+
+    .article-content .expert-comment { display: flex; gap: 20px; padding: 25px; margin: 30px 0; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 16px; border: 1px solid #bae6fd; position: relative; }
+    .article-content .expert-comment::before { content: "💬 専門家の見解"; position: absolute; top: -12px; left: 20px; background: #0ea5e9; color: white; padding: 4px 14px; border-radius: 12px; font-size: 0.75em; font-weight: bold; }
+    .article-content .expert-comment.doctor::before { content: "👨‍⚕️ 医師のコメント"; background: #0d9488; }
+    .article-content .expert-comment .expert-avatar img { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
+    .article-content .expert-comment .expert-body { flex: 1; padding-top: 5px; }
+    .article-content .expert-comment .expert-name { font-weight: bold; font-size: 0.95em; color: #333; margin: 0 0 2px 0; }
+    .article-content .expert-comment .expert-title { font-size: 0.8em; color: #0d9488; margin: 0 0 12px 0; }
+    .article-content .expert-comment .expert-text { font-size: 0.95em; line-height: 1.9; color: #444; }
+    .article-content .expert-comment .expert-text p { margin: 0 0 10px 0; }
+
+    .article-content .expert-balloon { display: flex; gap: 15px; margin: 30px 0; align-items: flex-start; }
+    .article-content .expert-balloon .balloon-avatar { flex-shrink: 0; text-align: center; }
+    .article-content .expert-balloon .balloon-avatar img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #e0e0e0; }
+    .article-content .expert-balloon .balloon-avatar .balloon-name { font-size: 0.7em; color: #666; margin-top: 5px; display: block; }
+    .article-content .expert-balloon .balloon-content { flex: 1; position: relative; background: #f0fdf4; padding: 18px 22px; border-radius: 18px; border: 1px solid #a7f3d0; }
+    .article-content .expert-balloon .balloon-content p { margin: 0; line-height: 1.8; font-size: 0.95em; }
+
+    .article-content table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.95em; }
+    .article-content table th { background: #2eb67d; color: white; padding: 12px 15px; text-align: left; }
+    .article-content table td { padding: 12px 15px; border-bottom: 1px solid #e0e0e0; }
+    .article-content table tr:nth-child(even) { background: #f9f9f9; }
+
+    .article-content .cta-container { text-align: center; margin: 35px 0; }
+    .article-content .cta-button { display: inline-block; background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%); color: white !important; padding: 18px 40px; border-radius: 30px; text-decoration: none !important; font-weight: bold; font-size: 1.05em; box-shadow: 0 4px 15px rgba(46,182,125,0.4); }
+    .article-content .cta-button.secondary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+    .article-content .author-box { padding: 25px; background: linear-gradient(135deg, #fafafa 0%, #fff 100%); border-radius: 16px; margin: 40px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e8e8e8; }
+    .article-content .author-box-label { display: inline-block; background: #2eb67d; color: white; padding: 4px 12px; border-radius: 15px; font-size: 0.75em; font-weight: bold; margin-bottom: 15px; }
+    .article-content .author-box-header { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; }
+    .article-content .author-box img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
+    .article-content .author-box .author-name { font-size: 1.15em; font-weight: bold; color: #333; margin: 0 0 5px 0; border-left: 3px solid #2eb67d; padding-left: 10px; }
+    .article-content .author-box .author-title { color: #2eb67d; font-size: 0.85em; margin: 0; padding-left: 13px; }
+    .article-content .author-box .author-credentials { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0 13px; }
+    .article-content .author-box .credential { background: #e8f5e9; color: #2e7d32; padding: 3px 10px; border-radius: 12px; font-size: 0.75em; }
+    .article-content .author-box .author-bio { font-size: 0.9em; line-height: 1.8; color: #555; margin: 0; }
+
+    .article-content .related-articles { margin: 40px 0; }
+    .article-content .related-title { font-size: 1.2em; font-weight: bold; color: #333; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #2eb67d; }
+    .article-content .related-title::before { content: "📚 "; }
+    .article-content .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .article-content .related-card { display: block; text-decoration: none; color: inherit; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; background: #fff; }
+    .article-content .related-card img { width: 100%; height: 140px; object-fit: cover; }
+    .article-content .related-card-body { padding: 15px; }
+    .article-content .related-card-title { font-size: 0.95em; font-weight: bold; color: #333; margin: 0 0 8px 0; }
+    .article-content .related-card-desc { font-size: 0.8em; color: #777; margin: 0; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🏥 AthReebo 薬記事ジェネレーター</h1>
+    <p>LLMで生成したJSONをHTML記事に変換</p>
+  </header>
+
+  <div class="container">
+    <div class="layout">
+      <!-- 入力パネル -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>📝 JSON入力</h2>
+          <div class="btn-group">
+            <button class="btn btn-outline" onclick="loadSample()">サンプル読込</button>
+            <button class="btn btn-primary" onclick="generateHTML()">HTML生成</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="error-message" id="errorMsg"></div>
+          <div class="success-message" id="successMsg"></div>
+          <textarea id="jsonInput" placeholder="LLMで生成したJSONをここに貼り付けてください..."></textarea>
+        </div>
+      </div>
+
+      <!-- 出力パネル -->
+      <div class="panel">
+        <div class="panel-header">
+          <h2>📄 出力</h2>
+          <div class="btn-group">
+            <button class="btn btn-outline tab active" data-tab="preview">プレビュー</button>
+            <button class="btn btn-outline tab" data-tab="html">HTML</button>
+            <button class="btn btn-outline tab" data-tab="meta">Meta/SEO</button>
+            <button class="btn btn-secondary" onclick="copyHTML()">HTMLコピー</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="tab-content active" id="preview-tab">
+            <div class="preview-frame" id="previewFrame"></div>
+          </div>
+          <div class="tab-content" id="html-tab">
+            <textarea id="htmlOutput" readonly style="height: 500px;"></textarea>
+          </div>
+          <div class="tab-content" id="meta-tab">
+            <div class="meta-section">
+              <div class="meta-group">
+                <div class="meta-label">
+                  <span>Meta Title</span>
+                  <span class="char-count" id="titleCharCount">0文字</span>
+                </div>
+                <input type="text" id="metaTitle" readonly>
+                <button class="btn btn-outline btn-sm" onclick="copyField('metaTitle')">コピー</button>
+              </div>
+              <div class="meta-group">
+                <div class="meta-label">
+                  <span>Meta Description (SEO/AEO最適化)</span>
+                  <span class="char-count" id="descCharCount">0文字</span>
+                </div>
+                <textarea id="metaDescription" readonly rows="3"></textarea>
+                <button class="btn btn-outline btn-sm" onclick="copyField('metaDescription')">コピー</button>
+              </div>
+              <div class="meta-group">
+                <div class="meta-label">
+                  <span>Keywords</span>
+                </div>
+                <input type="text" id="metaKeywords" readonly>
+                <button class="btn btn-outline btn-sm" onclick="copyField('metaKeywords')">コピー</button>
+              </div>
+              <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ddd;">
+              <div class="meta-group">
+                <div class="meta-label">
+                  <span>HTMLヘッダー用Metaタグ</span>
+                </div>
+                <textarea id="metaTagsOutput" readonly rows="12" style="font-family: monospace; font-size: 12px;"></textarea>
+                <button class="btn btn-primary btn-sm" onclick="copyField('metaTagsOutput')">Metaタグをコピー</button>
+              </div>
+              <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ddd;">
+              <div class="meta-group">
+                <div class="meta-label">
+                  <span>構造化データ (JSON-LD)</span>
+                </div>
+                <textarea id="jsonLdOutput" readonly rows="15" style="font-family: monospace; font-size: 11px;"></textarea>
+                <button class="btn btn-secondary btn-sm" onclick="copyField('jsonLdOutput')">JSON-LDをコピー</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // タブ切り替え
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-tab').classList.add('active');
+      });
+    });
+
+    // サンプルJSON
+    const sampleJSON = {
+      "drug_name": "ロコイド軟膏",
+      "drug_name_kana": "ろこいどなんこう",
+      "symptom": "湿疹・皮膚炎・かゆみ",
+      "category": "ステロイド外用薬",
+      "catch_copy": {
+        "main": "穏やかに効く",
+        "sub": "顔にも使える優しいステロイド"
+      },
+      "intro": "ロコイド軟膏は、ヒドロコルチゾン酪酸エステルを主成分とするステロイド外用薬です。ステロイドの中では比較的穏やかな効果で、顔や首など皮膚の薄い部分にも使用できるのが特徴です。",
+      "benefit_list": [
+        "炎症を素早く抑える",
+        "かゆみを軽減する",
+        "比較的副作用が少ない",
+        "顔や首にも使用可能"
+      ],
+      "problem_list": [
+        {
+          "problem": "顔の湿疹が気になるけど、ステロイドは怖い...",
+          "solution": "ロコイド軟膏はマイルドランクで顔にも安心して使えます"
+        },
+        {
+          "problem": "子どもの肌荒れに何を使えばいい?",
+          "solution": "小児にも使用可能な穏やかな作用のステロイドです"
+        }
+      ],
+      "doctor_comment": {
+        "name": "鍵野 太郎",
+        "title": "QBCスキンクリニック院長",
+        "credential": "皮膚科専門医・医学博士",
+        "image_url": "https://pub-72bbcf8e61fe4f5c89e5b1d0b6409eae.r2.dev/hospital_director_kagino.webp",
+        "comments": [
+          {
+            "context": "効果について",
+            "text": "ロコイド軟膏は「マイルド」ランクのステロイドで、顔や首など皮膚の薄い部分に適しています。湿疹や軽度のアトピー性皮膚炎に効果的で、正しく使えば安全性の高い薬です。"
+          },
+          {
+            "context": "使い方のコツ",
+            "text": "塗る量の目安として「FTU（フィンガーチップユニット）」を覚えておくと便利です。人差し指の先から第一関節までの量で、手のひら2枚分に塗れます。薄く塗りすぎると効果が出にくいので、適量を心がけてくださいね。"
+          }
+        ]
+      },
+      "drug_info": {
+        "ingredient": "ヒドロコルチゾン酪酸エステル",
+        "ingredient_detail": "副腎皮質ホルモン（ステロイド）の一種で、炎症を抑える作用があります。",
+        "effect": "湿疹、皮膚炎、かゆみ、虫刺され、かぶれなどの症状を改善します。",
+        "mechanism": "皮膚の炎症反応を抑制し、血管の拡張や浮腫を軽減。また、かゆみの原因となる物質の放出を抑えます。",
+        "strength_rank": "5段階中4番目（マイルド）- 比較的穏やかな作用",
+        "dosage_form": "軟膏・クリーム"
+      },
+      "usage": {
+        "basic": "1日1〜数回、患部に適量を塗布します。",
+        "frequency": "1日1〜2回",
+        "duration": "症状が改善したら使用を中止。長期連用は避ける（通常1〜2週間程度）",
+        "precautions": [
+          "傷口には使用しない",
+          "目の周りは特に薄く塗る",
+          "長期間の連用は避ける",
+          "感染症のある部位には使用しない"
+        ]
+      },
+      "flow_steps": [
+        {
+          "step": 1,
+          "title": "患部を清潔にする",
+          "description": "石鹸で優しく洗い、タオルで水分を拭き取ります。"
+        },
+        {
+          "step": 2,
+          "title": "適量を指に取る",
+          "description": "人差し指の先から第一関節まで（約0.5g）が目安です。"
+        },
+        {
+          "step": 3,
+          "title": "患部に塗り広げる",
+          "description": "擦り込まず、優しく塗り広げます。"
+        }
+      ],
+      "comparison_table": {
+        "title": "ステロイド外用薬の強さ比較",
+        "headers": ["項目", "ロコイド", "リンデロンV", "キンダベート"],
+        "rows": [
+          ["強さランク", "マイルド", "ストロング", "ミディアム"],
+          ["顔への使用", "○", "△", "○"],
+          ["子どもへの使用", "○", "△", "○"],
+          ["市販薬", "なし", "なし", "なし"]
+        ]
+      },
+      "price_info": {
+        "prescription": {
+          "price": "約300〜500円（10g）",
+          "insurance": "保険適用あり。3割負担で約100〜150円"
+        },
+        "otc": {
+          "available": false,
+          "price_range": "-",
+          "products": []
+        }
+      },
+      "side_effects": {
+        "common": [
+          {
+            "symptom": "皮膚の刺激感",
+            "frequency": "使用初期にまれに",
+            "action": "症状が続く場合は使用を中止し医師に相談"
+          }
+        ],
+        "rare": [
+          {
+            "symptom": "皮膚萎縮（長期使用時）",
+            "action": "長期連用を避け、医師の指示に従う"
+          }
+        ],
+        "contraindications": [
+          "細菌・真菌・ウイルス感染のある部位",
+          "傷口・潰瘍のある部位",
+          "本剤の成分にアレルギーのある方"
+        ]
+      },
+      "faq": [
+        {
+          "question": "顔に毎日塗っても大丈夫ですか?",
+          "answer": "短期間であれば問題ありませんが、長期連用は避けてください。症状が改善したら使用を中止し、1〜2週間以上続く場合は医師に相談してください。"
+        },
+        {
+          "question": "赤ちゃんにも使えますか?",
+          "answer": "医師の指示のもとで使用可能です。ただし、乳幼児は皮膚が薄くステロイドの吸収率が高いため、使用部位や期間には注意が必要です。"
+        },
+        {
+          "question": "市販で買えますか?",
+          "answer": "ロコイド軟膏は処方薬のため、市販では購入できません。皮膚科を受診して処方してもらう必要があります。"
+        }
+      ],
+      "user_voice": [
+        {
+          "age": "30代",
+          "gender": "女性",
+          "symptom": "顔の湿疹",
+          "comment": "顔の湿疹に悩んでいましたが、ロコイド軟膏を塗ったら数日で改善しました。副作用も特に感じませんでした。",
+          "rating": 5
+        },
+        {
+          "age": "40代",
+          "gender": "男性",
+          "symptom": "手の湿疹",
+          "comment": "穏やかな効き目ですが、軽い症状には十分でした。強いステロイドが心配な方におすすめです。",
+          "rating": 4
+        }
+      ],
+      "competitors": [
+        {
+          "name": "キンダベート軟膏",
+          "comparison": "同じくらいの強さ（ミディアム）。どちらも顔に使用可能。",
+          "recommendation": "効果に大きな差はなく、どちらも選択肢として適切です。"
+        }
+      ],
+      "cta": {
+        "primary_text": "皮膚科を探す",
+        "primary_url": "#",
+        "secondary_text": "オンライン診療を利用する",
+        "secondary_url": "#"
+      },
+      "related_articles": [
+        {
+          "title": "ステロイド外用薬の強さランク一覧",
+          "description": "ストロンゲストからウィークまで、全5段階を解説",
+          "url": "#"
+        },
+        {
+          "title": "顔の湿疹の原因と対処法",
+          "description": "皮膚科医が解説する正しいケア方法",
+          "url": "#"
+        }
+      ],
+      "meta": {
+        "title": "ロコイド軟膏の効果と正しい使い方｜顔にも使える優しいステロイド",
+        "description": "ロコイド軟膏の効果、使い方、副作用を皮膚科専門医が解説。マイルドランクで顔や首にも使用可能なステロイド外用薬です。",
+        "keywords": ["ロコイド軟膏", "ステロイド", "湿疹", "皮膚炎", "顔"]
+      },
+      "last_updated": "2024-01-27",
+      "medical_disclaimer": "この記事は医療情報の提供を目的としており、医師の診断・治療の代わりとなるものではありません。症状がある場合は必ず医師に相談してください。"
+    };
+
+    function loadSample() {
+      document.getElementById('jsonInput').value = JSON.stringify(sampleJSON, null, 2);
+      showSuccess('サンプルJSONを読み込みました');
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('successMsg').style.display = 'none';
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    function generateHTML() {
+      try {
+        const jsonStr = document.getElementById('jsonInput').value;
+        const data = JSON.parse(jsonStr);
+        const html = buildHTML(data);
+
+        document.getElementById('previewFrame').innerHTML = html;
+        document.getElementById('htmlOutput').value = html;
+
+        // Meta/SEO情報を生成
+        generateMetaInfo(data);
+
+        showSuccess('HTML生成完了！');
+      } catch (e) {
+        showError('JSONパースエラー: ' + e.message);
+      }
+    }
+
+    // SEO/AEO最適化されたメタディスクリプションを自動生成
+    function generateMetaDescription(d) {
+      // AEO (Answer Engine Optimization) を考慮した質問応答形式
+      // 70-150文字で、検索意図に直接回答する形式
+
+      const drugName = d.drug_name;
+      const symptom = d.symptom;
+      const mainBenefit = d.benefit_list[0];
+      const ingredient = d.drug_info?.ingredient || '';
+      const strengthRank = d.drug_info?.strength_rank || '';
+
+      // 複数のパターンから最適なものを選択
+      const patterns = [
+        // パターン1: 質問応答型（AEO最適化）
+        `${drugName}は${symptom}に効果的な薬です。${mainBenefit}という特徴があり、医師の指導のもと正しく使用することで安全に症状を改善できます。`,
+
+        // パターン2: 成分・効能型
+        `${drugName}（${ingredient}）の効果・使い方・副作用を専門医が解説。${symptom}の治療に使われ、${mainBenefit}。正しい使用法と注意点を詳しく紹介します。`,
+
+        // パターン3: 直接回答型
+        `【医師監修】${drugName}は${symptom}に処方される薬です。${strengthRank ? strengthRank + 'で、' : ''}${mainBenefit}。効果・副作用・使い方を解説します。`
+      ];
+
+      // 各パターンの文字数をチェックし、70-150文字に収まるものを優先
+      for (const pattern of patterns) {
+        const cleaned = pattern.replace(/\s+/g, '');
+        if (cleaned.length >= 70 && cleaned.length <= 150) {
+          return pattern;
+        }
+      }
+
+      // どれも条件に合わない場合、最初のパターンを調整
+      let description = patterns[0];
+      const length = description.replace(/\s+/g, '').length;
+
+      if (length < 70) {
+        // 短すぎる場合は追加情報を付加
+        description += `使用方法や副作用についても詳しく解説しています。`;
+      } else if (length > 150) {
+        // 長すぎる場合は切り詰め
+        description = description.substring(0, 147) + '...';
+      }
+
+      return description;
+    }
+
+    // メタ情報全体を生成
+    function generateMetaInfo(d) {
+      // Meta Title (60文字以内推奨)
+      const metaTitle = d.meta?.title ||
+        `${d.drug_name}の効果と正しい使い方｜${d.catch_copy?.sub || '専門医が解説'}`;
+
+      // Meta Description (70-150文字)
+      const metaDescription = d.meta?.description || generateMetaDescription(d);
+
+      // Keywords
+      const keywords = d.meta?.keywords ||
+        [d.drug_name, d.symptom, d.drug_info?.ingredient, d.category].filter(Boolean);
+
+      // フィールドに設定
+      document.getElementById('metaTitle').value = metaTitle;
+      document.getElementById('metaDescription').value = metaDescription;
+      document.getElementById('metaKeywords').value = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+
+      // 文字数カウント更新
+      updateCharCount('titleCharCount', metaTitle.length, 30, 60);
+      updateCharCount('descCharCount', metaDescription.replace(/\s+/g, '').length, 70, 150);
+
+      // HTMLヘッダー用Metaタグを生成
+      const metaTags = generateMetaTags(d, metaTitle, metaDescription, keywords);
+      document.getElementById('metaTagsOutput').value = metaTags;
+
+      // JSON-LDを生成
+      const jsonLd = generateJsonLd(d, metaTitle, metaDescription);
+      document.getElementById('jsonLdOutput').value = JSON.stringify(jsonLd, null, 2);
+    }
+
+    // 文字数カウントを更新
+    function updateCharCount(elementId, count, min, max) {
+      const el = document.getElementById(elementId);
+      el.textContent = `${count}文字`;
+      el.classList.remove('warning', 'error', 'success');
+
+      if (count < min) {
+        el.classList.add('warning');
+        el.textContent += ` (${min}文字以上推奨)`;
+      } else if (count > max) {
+        el.classList.add('error');
+        el.textContent += ` (${max}文字以下推奨)`;
+      } else {
+        el.classList.add('success');
+        el.textContent += ' ✓';
+      }
+    }
+
+    // HTMLヘッダー用Metaタグを生成
+    function generateMetaTags(d, title, description, keywords) {
+      const keywordsStr = Array.isArray(keywords) ? keywords.join(', ') : keywords;
+      const imageUrl = d.eyecatch_image_url || `https://placehold.co/1200x630/e8f5e9/2eb67d?text=${encodeURIComponent(d.drug_name)}`;
+      const url = d.canonical_url || '#';
+
+      return `<!-- 基本Meta -->
+<meta name="description" content="${description}">
+<meta name="keywords" content="${keywordsStr}">
+<meta name="author" content="${d.doctor_comment?.name || 'QBCスキンクリニック'}">
+
+<!-- Open Graph (Facebook/LINE等) -->
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="${url}">
+<meta property="og:image" content="${imageUrl}">
+<meta property="og:site_name" content="QBCスキンクリニック">
+<meta property="og:locale" content="ja_JP">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${description}">
+<meta name="twitter:image" content="${imageUrl}">
+
+<!-- 追加SEO -->
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="${url}">`;
+    }
+
+    // 医療記事用JSON-LD構造化データを生成
+    function generateJsonLd(d, title, description) {
+      const now = new Date().toISOString();
+
+      return {
+        "@context": "https://schema.org",
+        "@type": "MedicalWebPage",
+        "name": title,
+        "description": description,
+        "url": d.canonical_url || "",
+        "datePublished": d.last_updated || now.split('T')[0],
+        "dateModified": now.split('T')[0],
+        "author": {
+          "@type": "Person",
+          "name": d.doctor_comment?.name || "",
+          "jobTitle": d.doctor_comment?.title || "",
+          "affiliation": {
+            "@type": "MedicalClinic",
+            "name": "QBCスキンクリニック"
+          }
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "QBCスキンクリニック",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pub-72bbcf8e61fe4f5c89e5b1d0b6409eae.r2.dev/qbc_logo.png"
+          }
+        },
+        "mainEntity": {
+          "@type": "Drug",
+          "name": d.drug_name,
+          "activeIngredient": d.drug_info?.ingredient || "",
+          "drugClass": d.category || "",
+          "description": d.intro || ""
+        },
+        "about": {
+          "@type": "MedicalCondition",
+          "name": d.symptom
+        },
+        "medicalAudience": {
+          "@type": "MedicalAudience",
+          "audienceType": "Patient"
+        },
+        "inLanguage": "ja",
+        "isAccessibleForFree": true,
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [".article-content h1", ".article-content .intro", ".article-content .point-box"]
+        }
+      };
+    }
+
+    // フィールドをクリップボードにコピー
+    function copyField(fieldId) {
+      const field = document.getElementById(fieldId);
+      navigator.clipboard.writeText(field.value).then(() => {
+        showSuccess('コピーしました！');
+      });
+    }
+
+    function buildHTML(d) {
+      // 星評価を生成
+      function stars(rating) {
+        return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+      }
+
+      return `<div class="article-content">
+
+<span class="category-badge">${d.category}</span>
+
+<h1>${d.drug_name}の効果と正しい使い方｜${d.catch_copy.sub}</h1>
+
+<div class="author-byline">
+  <img src="${d.doctor_comment.image_url}" alt="${d.doctor_comment.name}">
+  <div class="info">
+    <p class="name">${d.doctor_comment.name}（${d.doctor_comment.title}）</p>
+    <p class="title">${d.doctor_comment.credential}</p>
+  </div>
+  <span class="date">${d.last_updated} 更新</span>
+</div>
+
+<div class="eyecatch">
+  <img src="https://placehold.co/800x400/e8f5e9/2eb67d?text=${encodeURIComponent(d.drug_name)}" alt="${d.drug_name}">
+</div>
+
+<p>${d.intro}</p>
+
+<div class="toc">
+  <p class="toc-title">この記事の目次</p>
+  <ol>
+    <li><a href="#section-benefits">${d.drug_name}のメリット・効果</a></li>
+    <li><a href="#section-info">成分・作用機序</a></li>
+    <li><a href="#section-usage">正しい使い方</a></li>
+    <li><a href="#section-comparison">類似薬との比較</a></li>
+    <li><a href="#section-side-effects">副作用と注意点</a></li>
+    <li><a href="#section-price">価格・入手方法</a></li>
+    <li><a href="#section-faq">よくある質問</a></li>
+    <li><a href="#section-voice">使用者の声</a></li>
+  </ol>
+</div>
+
+<h2 id="section-benefits">${d.drug_name}のメリット・効果</h2>
+
+<div class="point-box green">
+  <p class="point-box-title">💡 ${d.drug_name}の特徴</p>
+  <ul>
+    ${d.benefit_list.map(b => `<li>${b}</li>`).join('\n    ')}
+  </ul>
+</div>
+
+<h3>こんな悩みに効果的</h3>
+
+${d.problem_list.map(p => `<div class="point-box blue">
+  <p class="point-box-title">😟 ${p.problem}</p>
+  <p>→ <strong>${p.solution}</strong></p>
+</div>`).join('\n\n')}
+
+<div class="expert-comment doctor">
+  <div class="expert-avatar">
+    <img src="${d.doctor_comment.image_url}" alt="${d.doctor_comment.name}">
+  </div>
+  <div class="expert-body">
+    <p class="expert-name">${d.doctor_comment.name}（${d.doctor_comment.title}）</p>
+    <p class="expert-title">${d.doctor_comment.credential}</p>
+    <div class="expert-text">
+      <p>${d.doctor_comment.comments[0].text}</p>
+    </div>
+  </div>
+</div>
+
+<h2 id="section-info">${d.drug_name}の成分・作用機序</h2>
+
+<h3>主成分</h3>
+<p><strong>${d.drug_info.ingredient}</strong></p>
+<p>${d.drug_info.ingredient_detail}</p>
+
+<h3>効果・効能</h3>
+<p>${d.drug_info.effect}</p>
+
+<h3>作用機序（なぜ効くのか）</h3>
+<p>${d.drug_info.mechanism}</p>
+
+${d.drug_info.strength_rank ? `<div class="point-box yellow">
+  <p class="point-box-title">📊 薬の強さランク</p>
+  <p>${d.drug_info.strength_rank}</p>
+</div>` : ''}
+
+<h2 id="section-usage">${d.drug_name}の正しい使い方</h2>
+
+<p>${d.usage.basic}</p>
+
+<div class="steps">
+  ${d.flow_steps.map(s => `<div class="step">
+    <span class="step-number">${s.step}</span>
+    <div class="step-content">
+      <p class="step-title">${s.title}</p>
+      <p class="step-desc">${s.description}</p>
+    </div>
+  </div>`).join('\n  ')}
+</div>
+
+<div class="point-box yellow">
+  <p class="point-box-title">⏰ 使用頻度・期間</p>
+  <p><strong>使用頻度：</strong>${d.usage.frequency}</p>
+  <p><strong>使用期間の目安：</strong>${d.usage.duration}</p>
+</div>
+
+${d.doctor_comment.comments[1] ? `<div class="expert-balloon green">
+  <div class="balloon-avatar">
+    <img src="${d.doctor_comment.image_url}" alt="${d.doctor_comment.name}">
+    <span class="balloon-name">鍵野院長</span>
+  </div>
+  <div class="balloon-content">
+    <p>${d.doctor_comment.comments[1].text}</p>
+  </div>
+</div>` : ''}
+
+<div class="warning-box">
+  <p class="warning-box-title">使用上の注意点</p>
+  <ul>
+    ${d.usage.precautions.map(p => `<li>${p}</li>`).join('\n    ')}
+  </ul>
+</div>
+
+<h2 id="section-comparison">${d.comparison_table.title}</h2>
+
+<table>
+  <tr>
+    ${d.comparison_table.headers.map(h => `<th>${h}</th>`).join('')}
+  </tr>
+  ${d.comparison_table.rows.map(row => `<tr>
+    ${row.map(cell => `<td>${cell}</td>`).join('')}
+  </tr>`).join('\n  ')}
+</table>
+
+${d.competitors.map(c => `<div class="point-box gray">
+  <p class="point-box-title">🔄 ${c.name}との比較</p>
+  <p>${c.comparison}</p>
+  <p><strong>おすすめ：</strong>${c.recommendation}</p>
+</div>`).join('\n\n')}
+
+<h2 id="section-side-effects">副作用と注意点</h2>
+
+<h3>よくある副作用</h3>
+
+${d.side_effects.common.map(s => `<div class="point-box pink">
+  <p class="point-box-title">${s.symptom}（${s.frequency}）</p>
+  <p><strong>対処法：</strong>${s.action}</p>
+</div>`).join('\n\n')}
+
+<h3>まれな副作用</h3>
+
+${d.side_effects.rare.map(s => `<div class="warning-box">
+  <p class="warning-box-title">${s.symptom}</p>
+  <p>${s.action}</p>
+</div>`).join('\n\n')}
+
+<div class="danger-box">
+  <p class="danger-box-title">使用してはいけないケース</p>
+  <ul>
+    ${d.side_effects.contraindications.map(c => `<li>${c}</li>`).join('\n    ')}
+  </ul>
+</div>
+
+<h2 id="section-price">価格・入手方法</h2>
+
+<h3>処方薬として</h3>
+<p><strong>価格目安：</strong>${d.price_info.prescription.price}</p>
+<p><strong>保険適用：</strong>${d.price_info.prescription.insurance}</p>
+
+${d.price_info.otc.available ? `<h3>市販薬として</h3>
+<p><strong>価格帯：</strong>${d.price_info.otc.price_range}</p>
+<ul>
+  ${d.price_info.otc.products.map(p => `<li>${p}</li>`).join('\n  ')}
+</ul>` : ''}
+
+<div class="cta-container">
+  <a href="${d.cta.primary_url}" class="cta-button">${d.cta.primary_text}</a>
+</div>
+
+<h2 id="section-faq">よくある質問（Q&A）</h2>
+
+<div class="qa-section">
+  ${d.faq.map(f => `<div class="qa-item">
+    <div class="question">${f.question}</div>
+    <div class="answer">
+      <div class="answer-content">
+        <p>${f.answer}</p>
+      </div>
+    </div>
+  </div>`).join('\n  ')}
+</div>
+
+<h2 id="section-voice">使用者の声</h2>
+
+${d.user_voice.map(v => `<div class="point-box green">
+  <p class="point-box-title">👤 ${v.age}${v.gender}（${v.symptom}）</p>
+  <p>「${v.comment}」</p>
+  <p>満足度：${stars(v.rating)}</p>
+</div>`).join('\n\n')}
+
+<p><em>※個人の感想です。効果には個人差があります。</em></p>
+
+<h2>まとめ</h2>
+
+<div class="point-box blue">
+  <p class="point-box-title">📝 この記事のポイント</p>
+  <ul>
+    <li>${d.drug_name}は<strong>${d.symptom}</strong>に効果的</li>
+    <li>主成分は<strong>${d.drug_info.ingredient}</strong></li>
+    <li>使用頻度は<strong>${d.usage.frequency}</strong></li>
+    <li>副作用に注意して正しく使用することが大切</li>
+  </ul>
+</div>
+
+<p>${d.medical_disclaimer}</p>
+
+<div class="cta-container">
+  <a href="${d.cta.primary_url}" class="cta-button">${d.cta.primary_text}</a>
+  ${d.cta.secondary_text ? `<br><br><a href="${d.cta.secondary_url}" class="cta-button secondary">${d.cta.secondary_text}</a>` : ''}
+</div>
+
+<hr>
+
+<div class="author-box">
+  <span class="author-box-label">この記事の監修者</span>
+  <div class="author-box-header">
+    <img src="${d.doctor_comment.image_url}" alt="${d.doctor_comment.name}">
+    <div class="author-info">
+      <p class="author-name">${d.doctor_comment.name}</p>
+      <p class="author-title">${d.doctor_comment.title}</p>
+      <div class="author-credentials">
+        <span class="credential">${d.doctor_comment.credential}</span>
+      </div>
+    </div>
+  </div>
+  <p class="author-bio">皮膚科専門医として15年以上の臨床経験を持つ。患者さん一人ひとりに寄り添った丁寧な診療を心がけ、最新の医学知識に基づいた治療を提供している。</p>
+</div>
+
+<hr>
+
+<div class="related-articles">
+  <p class="related-title">関連記事</p>
+  <div class="related-grid">
+    ${d.related_articles.map(r => `<a href="${r.url}" class="related-card">
+      <img src="https://placehold.co/400x200/e8f5e9/2eb67d?text=Related" alt="${r.title}">
+      <div class="related-card-body">
+        <p class="related-card-title">${r.title}</p>
+        <p class="related-card-desc">${r.description}</p>
+      </div>
+    </a>`).join('\n    ')}
+  </div>
+</div>
+
+</div>`;
+    }
+
+    function copyHTML() {
+      const html = document.getElementById('htmlOutput').value;
+      navigator.clipboard.writeText(html).then(() => {
+        showSuccess('HTMLをクリップボードにコピーしました！');
+      });
+    }
+  </script>
+</body>
+</html>

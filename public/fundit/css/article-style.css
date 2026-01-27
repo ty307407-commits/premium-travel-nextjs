@@ -1,0 +1,965 @@
+/*
+ * AthReebo - WordPress Blog Style CSS
+ * LLM生成Markdownをそのままコピペして使えるスタイル
+ *
+ * 使い方：WordPressテーマのカスタムCSS、または追加CSSに貼り付け
+ */
+
+/* ============================================
+   基本設定
+   ============================================ */
+.article-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.article-content * {
+  box-sizing: border-box;
+}
+
+/* ============================================
+   見出しスタイル
+   ============================================ */
+.article-content h1 {
+  font-size: 1.8em;
+  color: #1a1a1a;
+  border-bottom: 3px solid #2eb67d;
+  padding-bottom: 15px;
+  margin: 0 0 25px 0;
+}
+
+.article-content h2 {
+  font-size: 1.4em;
+  color: #333;
+  margin: 50px 0 20px 0;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, #e8f5e9 0%, #f1f8e9 100%);
+  border-left: 5px solid #2eb67d;
+  border-radius: 0 8px 8px 0;
+  position: relative;
+}
+
+.article-content h3 {
+  font-size: 1.2em;
+  color: #444;
+  margin: 35px 0 15px 0;
+  padding: 10px 15px;
+  background: #f5f5f5;
+  border-left: 4px solid #78909c;
+  border-radius: 0 6px 6px 0;
+}
+
+.article-content h4 {
+  font-size: 1.1em;
+  color: #555;
+  margin: 25px 0 12px 0;
+  padding-left: 12px;
+  border-left: 3px solid #b0bec5;
+}
+
+/* ============================================
+   テキスト・リスト
+   ============================================ */
+.article-content p {
+  margin: 1.2em 0;
+  line-height: 2;
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 25px;
+  margin: 1.2em 0;
+}
+
+.article-content li {
+  margin: 10px 0;
+  line-height: 1.8;
+}
+
+.article-content a {
+  color: #2eb67d;
+  text-decoration: none;
+  border-bottom: 1px dotted #2eb67d;
+}
+
+.article-content a:hover {
+  color: #1e8e5e;
+  border-bottom-style: solid;
+}
+
+.article-content hr {
+  border: none;
+  border-top: 1px dashed #ddd;
+  margin: 40px 0;
+}
+
+/* ============================================
+   アイキャッチ・画像
+   ============================================ */
+.article-content .eyecatch {
+  width: 100%;
+  margin: 0 0 30px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.article-content .eyecatch img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* ============================================
+   カテゴリ・タグバッジ
+   ============================================ */
+.article-content .category-badge {
+  display: inline-block;
+  background: #2eb67d;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.article-content .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.article-content .tag {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #666;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8em;
+}
+
+/* ============================================
+   著者バイライン（記事上部）
+   ============================================ */
+.article-content .author-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 30px 0;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 10px;
+  border-left: 4px solid #2eb67d;
+}
+
+.article-content .author-byline img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-content .author-byline .info {
+  flex: 1;
+}
+
+.article-content .author-byline .name {
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 3px 0;
+  font-size: 0.95em;
+}
+
+.article-content .author-byline .title {
+  color: #2eb67d;
+  font-size: 0.8em;
+  margin: 0;
+}
+
+.article-content .author-byline .date {
+  color: #888;
+  font-size: 0.8em;
+}
+
+/* ============================================
+   目次（Table of Contents）
+   ============================================ */
+.article-content .toc {
+  background: #f8fdf9;
+  border: 2px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+}
+
+.article-content .toc-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #2eb67d;
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #c8e6c9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .toc-title::before {
+  content: "📋";
+}
+
+.article-content .toc ol {
+  margin: 0;
+  padding-left: 20px;
+  counter-reset: toc-counter;
+}
+
+.article-content .toc li {
+  margin: 8px 0;
+  line-height: 1.6;
+  list-style: none;
+  counter-increment: toc-counter;
+}
+
+.article-content .toc li::before {
+  content: counter(toc-counter) ". ";
+  color: #2eb67d;
+  font-weight: bold;
+}
+
+.article-content .toc a {
+  color: #555;
+  border-bottom: none;
+}
+
+.article-content .toc a:hover {
+  color: #2eb67d;
+}
+
+/* ============================================
+   Q&A・FAQ セクション
+   ============================================ */
+.article-content .qa-section {
+  margin: 30px 0;
+}
+
+.article-content .qa-item {
+  margin: 20px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.article-content .question {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e9 100%);
+  font-weight: bold;
+  color: #333;
+}
+
+.article-content .question::before {
+  content: "Q";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 35px;
+  height: 35px;
+  background: #2196f3;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.article-content .answer {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+}
+
+.article-content .answer::before {
+  content: "A";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 35px;
+  height: 35px;
+  background: #ff7043;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.article-content .answer-content {
+  flex: 1;
+}
+
+/* ============================================
+   ポイント・ハイライトボックス
+   ============================================ */
+.article-content .point-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  position: relative;
+}
+
+.article-content .point-box.green {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  border: 1px solid #a5d6a7;
+}
+
+.article-content .point-box.blue {
+  background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%);
+  border: 1px solid #90caf9;
+}
+
+.article-content .point-box.yellow {
+  background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%);
+  border: 1px solid #fff59d;
+}
+
+.article-content .point-box.pink {
+  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+  border: 1px solid #f48fb1;
+}
+
+.article-content .point-box.gray {
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border: 1px solid #bdbdbd;
+}
+
+.article-content .point-box-title {
+  font-weight: bold;
+  font-size: 1.05em;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .point-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================================
+   警告・注意ボックス
+   ============================================ */
+.article-content .warning-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border-left: 5px solid #ff9800;
+}
+
+.article-content .warning-box-title {
+  font-weight: bold;
+  color: #e65100;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .warning-box-title::before {
+  content: "⚠️";
+}
+
+.article-content .danger-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  border-left: 5px solid #f44336;
+}
+
+.article-content .danger-box-title {
+  font-weight: bold;
+  color: #c62828;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .danger-box-title::before {
+  content: "🚫";
+}
+
+/* ============================================
+   監修者・著者ボックス（記事下部）
+   ============================================ */
+.article-content .author-box {
+  padding: 25px;
+  background: linear-gradient(135deg, #fafafa 0%, #fff 100%);
+  border-radius: 16px;
+  margin: 40px 0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.article-content .author-box-label {
+  display: inline-block;
+  background: #2eb67d;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.75em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.article-content .author-box-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.article-content .author-box img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.article-content .author-box .author-info {
+  flex: 1;
+}
+
+.article-content .author-box .author-name {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+  border-left: 3px solid #2eb67d;
+  padding-left: 10px;
+}
+
+.article-content .author-box .author-title {
+  color: #2eb67d;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0;
+  padding-left: 13px;
+}
+
+.article-content .author-box .author-credentials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0 13px;
+}
+
+.article-content .author-box .credential {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+}
+
+.article-content .author-box .author-bio {
+  font-size: 0.9em;
+  line-height: 1.8;
+  color: #555;
+  margin: 0;
+}
+
+/* ============================================
+   関連記事
+   ============================================ */
+.article-content .related-articles {
+  margin: 40px 0;
+}
+
+.article-content .related-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2eb67d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .related-title::before {
+  content: "📚";
+}
+
+.article-content .related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.article-content .related-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+
+.article-content .related-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border-bottom: none;
+}
+
+.article-content .related-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.article-content .related-card-body {
+  padding: 15px;
+}
+
+.article-content .related-card-title {
+  font-size: 0.95em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.article-content .related-card-desc {
+  font-size: 0.8em;
+  color: #777;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   CTAボタン
+   ============================================ */
+.article-content .cta-container {
+  text-align: center;
+  margin: 35px 0;
+}
+
+.article-content .cta-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+  color: white !important;
+  padding: 18px 40px;
+  border-radius: 30px;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 1.05em;
+  box-shadow: 0 4px 15px rgba(46,182,125,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-bottom: none !important;
+}
+
+.article-content .cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(46,182,125,0.5);
+}
+
+.article-content .cta-button.secondary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+}
+
+.article-content .cta-button.secondary:hover {
+  box-shadow: 0 6px 20px rgba(102,126,234,0.5);
+}
+
+/* ============================================
+   比較テーブル
+   ============================================ */
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.95em;
+}
+
+.article-content table th {
+  background: #2eb67d;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.article-content table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.article-content table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.article-content table tr:hover {
+  background: #f0f7f4;
+}
+
+/* ============================================
+   ステップ・手順
+   ============================================ */
+.article-content .steps {
+  margin: 30px 0;
+}
+
+.article-content .step {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e8e8e8;
+}
+
+.article-content .step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+.article-content .step-content {
+  flex: 1;
+}
+
+.article-content .step-title {
+  font-weight: bold;
+  font-size: 1.05em;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.article-content .step-desc {
+  color: #555;
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* ============================================
+   引用・ブロッククォート
+   ============================================ */
+.article-content blockquote {
+  margin: 25px 0;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+  border-left: 5px solid #78909c;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: #555;
+}
+
+.article-content blockquote cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.85em;
+  color: #888;
+  font-style: normal;
+}
+
+/* ============================================
+   専門家コメント（記事内インライン）
+   ============================================ */
+.article-content .expert-comment {
+  display: flex;
+  gap: 20px;
+  padding: 25px;
+  margin: 30px 0;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 16px;
+  border: 1px solid #bae6fd;
+  position: relative;
+}
+
+.article-content .expert-comment::before {
+  content: "💬 専門家の見解";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #0ea5e9;
+  color: white;
+  padding: 4px 14px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+.article-content .expert-comment.doctor::before {
+  content: "👨‍⚕️ 医師のコメント";
+  background: #0d9488;
+}
+
+.article-content .expert-comment.supervisor::before {
+  content: "✅ 監修者コメント";
+  background: #2eb67d;
+}
+
+.article-content .expert-comment .expert-avatar {
+  flex-shrink: 0;
+}
+
+.article-content .expert-comment .expert-avatar img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.article-content .expert-comment .expert-body {
+  flex: 1;
+  padding-top: 5px;
+}
+
+.article-content .expert-comment .expert-name {
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #333;
+  margin: 0 0 2px 0;
+}
+
+.article-content .expert-comment .expert-title {
+  font-size: 0.8em;
+  color: #0ea5e9;
+  margin: 0 0 12px 0;
+}
+
+.article-content .expert-comment.doctor .expert-title {
+  color: #0d9488;
+}
+
+.article-content .expert-comment.supervisor .expert-title {
+  color: #2eb67d;
+}
+
+.article-content .expert-comment .expert-text {
+  font-size: 0.95em;
+  line-height: 1.9;
+  color: #444;
+  margin: 0;
+}
+
+.article-content .expert-comment .expert-text p {
+  margin: 0 0 10px 0;
+}
+
+.article-content .expert-comment .expert-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* 専門家コメント - 吹き出しスタイル */
+.article-content .expert-balloon {
+  display: flex;
+  gap: 15px;
+  margin: 30px 0;
+  align-items: flex-start;
+}
+
+.article-content .expert-balloon .balloon-avatar {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.article-content .expert-balloon .balloon-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+.article-content .expert-balloon .balloon-avatar .balloon-name {
+  font-size: 0.7em;
+  color: #666;
+  margin-top: 5px;
+  display: block;
+}
+
+.article-content .expert-balloon .balloon-content {
+  flex: 1;
+  position: relative;
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.article-content .expert-balloon .balloon-content::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 20px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #fff transparent transparent;
+  filter: drop-shadow(-2px 0 1px rgba(0,0,0,0.05));
+}
+
+.article-content .expert-balloon .balloon-content::after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 19px;
+  border-width: 11px;
+  border-style: solid;
+  border-color: transparent #e0e0e0 transparent transparent;
+  z-index: -1;
+}
+
+.article-content .expert-balloon .balloon-content p {
+  margin: 0;
+  line-height: 1.8;
+  font-size: 0.95em;
+}
+
+/* 専門家コメント色バリエーション */
+.article-content .expert-balloon.green .balloon-content {
+  background: #f0fdf4;
+  border-color: #a7f3d0;
+}
+
+.article-content .expert-balloon.green .balloon-content::before {
+  border-color: transparent #f0fdf4 transparent transparent;
+}
+
+.article-content .expert-balloon.green .balloon-content::after {
+  border-color: transparent #a7f3d0 transparent transparent;
+}
+
+.article-content .expert-balloon.blue .balloon-content {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.article-content .expert-balloon.blue .balloon-content::before {
+  border-color: transparent #f0f9ff transparent transparent;
+}
+
+.article-content .expert-balloon.blue .balloon-content::after {
+  border-color: transparent #bae6fd transparent transparent;
+}
+
+.article-content .expert-balloon.pink .balloon-content {
+  background: #fdf2f8;
+  border-color: #fbcfe8;
+}
+
+.article-content .expert-balloon.pink .balloon-content::before {
+  border-color: transparent #fdf2f8 transparent transparent;
+}
+
+.article-content .expert-balloon.pink .balloon-content::after {
+  border-color: transparent #fbcfe8 transparent transparent;
+}
+
+/* ============================================
+   レスポンシブ対応
+   ============================================ */
+@media (max-width: 768px) {
+  .article-content {
+    padding: 15px;
+    font-size: 15px;
+  }
+
+  .article-content h1 {
+    font-size: 1.5em;
+  }
+
+  .article-content h2 {
+    font-size: 1.25em;
+    padding: 12px 15px;
+  }
+
+  .article-content .author-box-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .article-content .author-box .author-name {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .article-content .author-box .author-title,
+  .article-content .author-box .author-credentials {
+    margin-left: 0;
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .article-content .related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .article-content .step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .article-content .question,
+  .article-content .answer {
+    padding: 15px;
+  }
+
+  .article-content .expert-comment {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 30px;
+  }
+
+  .article-content .expert-comment .expert-body {
+    padding-top: 0;
+  }
+
+  .article-content .expert-balloon {
+    flex-direction: column;
+  }
+
+  .article-content .expert-balloon .balloon-content::before,
+  .article-content .expert-balloon .balloon-content::after {
+    display: none;
+  }
+}

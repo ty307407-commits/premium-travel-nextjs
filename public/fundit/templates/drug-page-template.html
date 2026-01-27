@@ -1,0 +1,338 @@
+<!--
+  薬紹介ページ HTMLテンプレート
+
+  使い方：
+  1. LLMでJSONを生成
+  2. このテンプレートの {{変数名}} を実際の値に置換
+  3. WordPressのカスタムHTMLブロックに貼り付け
+
+  ※ 実際の運用では、JavaScriptやサーバーサイドで
+     JSONをパースしてHTMLを生成することを推奨
+-->
+
+<div class="article-content">
+
+<!-- カテゴリバッジ -->
+<span class="category-badge">{{category}}</span>
+
+<!-- タイトル -->
+<h1>{{drug_name}}の効果と正しい使い方｜{{catch_copy.sub}}</h1>
+
+<!-- 著者バイライン -->
+<div class="author-byline">
+  <img src="{{doctor_comment.image_url}}" alt="{{doctor_comment.name}}">
+  <div class="info">
+    <p class="name">{{doctor_comment.name}}（{{doctor_comment.title}}）</p>
+    <p class="title">{{doctor_comment.credential}}</p>
+  </div>
+  <span class="date">{{last_updated}} 更新</span>
+</div>
+
+<!-- アイキャッチ画像 -->
+<div class="eyecatch">
+  <img src="{{eyecatch_image_url}}" alt="{{drug_name}}">
+</div>
+
+<!-- 導入文 -->
+<p>{{intro}}</p>
+
+<!-- 目次 -->
+<div class="toc">
+  <p class="toc-title">この記事の目次</p>
+  <ol>
+    <li><a href="#section-benefits">{{drug_name}}のメリット・効果</a></li>
+    <li><a href="#section-info">成分・作用機序</a></li>
+    <li><a href="#section-usage">正しい使い方</a></li>
+    <li><a href="#section-comparison">類似薬との比較</a></li>
+    <li><a href="#section-side-effects">副作用と注意点</a></li>
+    <li><a href="#section-price">価格・入手方法</a></li>
+    <li><a href="#section-faq">よくある質問</a></li>
+    <li><a href="#section-voice">使用者の声</a></li>
+  </ol>
+</div>
+
+<!-- ============================================ -->
+<!-- メリット・効果 -->
+<!-- ============================================ -->
+<h2 id="section-benefits">{{drug_name}}のメリット・効果</h2>
+
+<div class="point-box green">
+  <p class="point-box-title">💡 {{drug_name}}の特徴</p>
+  <ul>
+    {{#each benefit_list}}
+    <li>{{this}}</li>
+    {{/each}}
+  </ul>
+</div>
+
+<h3>こんな悩みに効果的</h3>
+
+{{#each problem_list}}
+<div class="point-box blue">
+  <p class="point-box-title">😟 {{problem}}</p>
+  <p>→ <strong>{{solution}}</strong></p>
+</div>
+{{/each}}
+
+<!-- 医師コメント1 -->
+<div class="expert-comment doctor">
+  <div class="expert-avatar">
+    <img src="{{doctor_comment.image_url}}" alt="{{doctor_comment.name}}">
+  </div>
+  <div class="expert-body">
+    <p class="expert-name">{{doctor_comment.name}}（{{doctor_comment.title}}）</p>
+    <p class="expert-title">{{doctor_comment.credential}}</p>
+    <div class="expert-text">
+      <p>{{doctor_comment.comments[0].text}}</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- 成分・作用機序 -->
+<!-- ============================================ -->
+<h2 id="section-info">{{drug_name}}の成分・作用機序</h2>
+
+<h3>主成分</h3>
+<p><strong>{{drug_info.ingredient}}</strong></p>
+<p>{{drug_info.ingredient_detail}}</p>
+
+<h3>効果・効能</h3>
+<p>{{drug_info.effect}}</p>
+
+<h3>作用機序（なぜ効くのか）</h3>
+<p>{{drug_info.mechanism}}</p>
+
+{{#if drug_info.strength_rank}}
+<div class="point-box yellow">
+  <p class="point-box-title">📊 薬の強さランク</p>
+  <p>{{drug_info.strength_rank}}</p>
+</div>
+{{/if}}
+
+<!-- ============================================ -->
+<!-- 正しい使い方 -->
+<!-- ============================================ -->
+<h2 id="section-usage">{{drug_name}}の正しい使い方</h2>
+
+<p>{{usage.basic}}</p>
+
+<div class="steps">
+  {{#each flow_steps}}
+  <div class="step">
+    <span class="step-number">{{step}}</span>
+    <div class="step-content">
+      <p class="step-title">{{title}}</p>
+      <p class="step-desc">{{description}}</p>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<div class="point-box yellow">
+  <p class="point-box-title">⏰ 使用頻度・期間</p>
+  <p><strong>使用頻度：</strong>{{usage.frequency}}</p>
+  <p><strong>使用期間の目安：</strong>{{usage.duration}}</p>
+</div>
+
+<!-- 医師コメント（吹き出し） -->
+<div class="expert-balloon green">
+  <div class="balloon-avatar">
+    <img src="{{doctor_comment.image_url}}" alt="{{doctor_comment.name}}">
+    <span class="balloon-name">鍵野院長</span>
+  </div>
+  <div class="balloon-content">
+    <p>{{doctor_comment.comments[1].text}}</p>
+  </div>
+</div>
+
+<div class="warning-box">
+  <p class="warning-box-title">使用上の注意点</p>
+  <ul>
+    {{#each usage.precautions}}
+    <li>{{this}}</li>
+    {{/each}}
+  </ul>
+</div>
+
+<!-- ============================================ -->
+<!-- 類似薬との比較 -->
+<!-- ============================================ -->
+<h2 id="section-comparison">{{comparison_table.title}}</h2>
+
+<table>
+  <tr>
+    {{#each comparison_table.headers}}
+    <th>{{this}}</th>
+    {{/each}}
+  </tr>
+  {{#each comparison_table.rows}}
+  <tr>
+    {{#each this}}
+    <td>{{this}}</td>
+    {{/each}}
+  </tr>
+  {{/each}}
+</table>
+
+<h3>他の薬との違い</h3>
+
+{{#each competitors}}
+<div class="point-box gray">
+  <p class="point-box-title">🔄 {{name}}との比較</p>
+  <p>{{comparison}}</p>
+  <p><strong>おすすめ：</strong>{{recommendation}}</p>
+</div>
+{{/each}}
+
+<!-- ============================================ -->
+<!-- 副作用と注意点 -->
+<!-- ============================================ -->
+<h2 id="section-side-effects">副作用と注意点</h2>
+
+<h3>よくある副作用</h3>
+
+{{#each side_effects.common}}
+<div class="point-box pink">
+  <p class="point-box-title">{{symptom}}（{{frequency}}）</p>
+  <p><strong>対処法：</strong>{{action}}</p>
+</div>
+{{/each}}
+
+<h3>まれな副作用</h3>
+
+{{#each side_effects.rare}}
+<div class="warning-box">
+  <p class="warning-box-title">{{symptom}}</p>
+  <p>{{action}}</p>
+</div>
+{{/each}}
+
+<div class="danger-box">
+  <p class="danger-box-title">使用してはいけないケース</p>
+  <ul>
+    {{#each side_effects.contraindications}}
+    <li>{{this}}</li>
+    {{/each}}
+  </ul>
+</div>
+
+<!-- ============================================ -->
+<!-- 価格・入手方法 -->
+<!-- ============================================ -->
+<h2 id="section-price">価格・入手方法</h2>
+
+<h3>処方薬として</h3>
+<p><strong>価格目安：</strong>{{price_info.prescription.price}}</p>
+<p><strong>保険適用：</strong>{{price_info.prescription.insurance}}</p>
+
+{{#if price_info.otc.available}}
+<h3>市販薬として</h3>
+<p><strong>価格帯：</strong>{{price_info.otc.price_range}}</p>
+<p><strong>市販薬名：</strong></p>
+<ul>
+  {{#each price_info.otc.products}}
+  <li>{{this}}</li>
+  {{/each}}
+</ul>
+{{/if}}
+
+<div class="cta-container">
+  <a href="{{cta.primary_url}}" class="cta-button">{{cta.primary_text}}</a>
+</div>
+
+<!-- ============================================ -->
+<!-- よくある質問 -->
+<!-- ============================================ -->
+<h2 id="section-faq">よくある質問（Q&A）</h2>
+
+<div class="qa-section">
+  {{#each faq}}
+  <div class="qa-item">
+    <div class="question">{{question}}</div>
+    <div class="answer">
+      <div class="answer-content">
+        <p>{{answer}}</p>
+      </div>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<!-- ============================================ -->
+<!-- 使用者の声 -->
+<!-- ============================================ -->
+<h2 id="section-voice">使用者の声</h2>
+
+{{#each user_voice}}
+<div class="point-box green">
+  <p class="point-box-title">👤 {{age}}{{gender}}（{{symptom}}）</p>
+  <p>「{{comment}}」</p>
+  <p>満足度：{"★".repeat({{rating}})}{"☆".repeat(5-{{rating}})}</p>
+</div>
+{{/each}}
+
+<p><em>※個人の感想です。効果には個人差があります。</em></p>
+
+<!-- ============================================ -->
+<!-- まとめ -->
+<!-- ============================================ -->
+<h2>まとめ</h2>
+
+<div class="point-box blue">
+  <p class="point-box-title">📝 この記事のポイント</p>
+  <ul>
+    <li>{{drug_name}}は<strong>{{symptom}}</strong>に効果的</li>
+    <li>主成分は<strong>{{drug_info.ingredient}}</strong></li>
+    <li>使用頻度は<strong>{{usage.frequency}}</strong></li>
+    <li>副作用に注意して正しく使用することが大切</li>
+  </ul>
+</div>
+
+<p>{{medical_disclaimer}}</p>
+
+<div class="cta-container">
+  <a href="{{cta.primary_url}}" class="cta-button">{{cta.primary_text}}</a>
+  {{#if cta.secondary_text}}
+  <br><br>
+  <a href="{{cta.secondary_url}}" class="cta-button secondary">{{cta.secondary_text}}</a>
+  {{/if}}
+</div>
+
+<hr>
+
+<!-- 監修者ボックス -->
+<div class="author-box">
+  <span class="author-box-label">この記事の監修者</span>
+  <div class="author-box-header">
+    <img src="{{doctor_comment.image_url}}" alt="{{doctor_comment.name}}">
+    <div class="author-info">
+      <p class="author-name">{{doctor_comment.name}}</p>
+      <p class="author-title">{{doctor_comment.title}}</p>
+      <div class="author-credentials">
+        <span class="credential">{{doctor_comment.credential}}</span>
+      </div>
+    </div>
+  </div>
+  <p class="author-bio">皮膚科専門医として15年以上の臨床経験を持つ。患者さん一人ひとりに寄り添った丁寧な診療を心がけ、最新の医学知識に基づいた治療を提供している。</p>
+</div>
+
+<hr>
+
+<!-- 関連記事 -->
+<div class="related-articles">
+  <p class="related-title">関連記事</p>
+  <div class="related-grid">
+    {{#each related_articles}}
+    <a href="{{url}}" class="related-card">
+      <img src="https://placehold.co/400x200/e8f5e9/2eb67d?text=Related" alt="{{title}}">
+      <div class="related-card-body">
+        <p class="related-card-title">{{title}}</p>
+        <p class="related-card-desc">{{description}}</p>
+      </div>
+    </a>
+    {{/each}}
+  </div>
+</div>
+
+</div>

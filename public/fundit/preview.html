@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AthReebo - 記事プレビュー</title>
+  <style>
+    /* リセット */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    /* ヘッダー */
+    .preview-header {
+      background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+      color: white;
+      padding: 15px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .preview-header h1 {
+      font-size: 1.2em;
+      font-weight: normal;
+    }
+
+    /* メインコンテナ */
+    .preview-container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .preview-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+/*
+ * AthReebo - WordPress Blog Style CSS
+ * 以下、article-style.css の内容
+ */
+
+.article-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #333;
+}
+
+.article-content * {
+  box-sizing: border-box;
+}
+
+/* 見出しスタイル */
+.article-content h1 {
+  font-size: 1.8em;
+  color: #1a1a1a;
+  border-bottom: 3px solid #2eb67d;
+  padding-bottom: 15px;
+  margin: 0 0 25px 0;
+}
+
+.article-content h2 {
+  font-size: 1.4em;
+  color: #333;
+  margin: 50px 0 20px 0;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, #e8f5e9 0%, #f1f8e9 100%);
+  border-left: 5px solid #2eb67d;
+  border-radius: 0 8px 8px 0;
+  position: relative;
+}
+
+.article-content h3 {
+  font-size: 1.2em;
+  color: #444;
+  margin: 35px 0 15px 0;
+  padding: 10px 15px;
+  background: #f5f5f5;
+  border-left: 4px solid #78909c;
+  border-radius: 0 6px 6px 0;
+}
+
+.article-content h4 {
+  font-size: 1.1em;
+  color: #555;
+  margin: 25px 0 12px 0;
+  padding-left: 12px;
+  border-left: 3px solid #b0bec5;
+}
+
+/* テキスト・リスト */
+.article-content p {
+  margin: 1.2em 0;
+  line-height: 2;
+}
+
+.article-content ul,
+.article-content ol {
+  padding-left: 25px;
+  margin: 1.2em 0;
+}
+
+.article-content li {
+  margin: 10px 0;
+  line-height: 1.8;
+}
+
+.article-content a {
+  color: #2eb67d;
+  text-decoration: none;
+  border-bottom: 1px dotted #2eb67d;
+}
+
+.article-content a:hover {
+  color: #1e8e5e;
+  border-bottom-style: solid;
+}
+
+.article-content hr {
+  border: none;
+  border-top: 1px dashed #ddd;
+  margin: 40px 0;
+}
+
+/* アイキャッチ・画像 */
+.article-content .eyecatch {
+  width: 100%;
+  margin: 0 0 30px 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.article-content .eyecatch img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* カテゴリ・タグバッジ */
+.article-content .category-badge {
+  display: inline-block;
+  background: #2eb67d;
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.article-content .tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+
+.article-content .tag {
+  display: inline-block;
+  background: #f0f0f0;
+  color: #666;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.8em;
+}
+
+/* 著者バイライン（記事上部） */
+.article-content .author-byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 30px 0;
+  padding: 15px;
+  background: #fafafa;
+  border-radius: 10px;
+  border-left: 4px solid #2eb67d;
+}
+
+.article-content .author-byline img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-content .author-byline .info {
+  flex: 1;
+}
+
+.article-content .author-byline .name {
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 3px 0;
+  font-size: 0.95em;
+}
+
+.article-content .author-byline .title {
+  color: #2eb67d;
+  font-size: 0.8em;
+  margin: 0;
+}
+
+.article-content .author-byline .date {
+  color: #888;
+  font-size: 0.8em;
+}
+
+/* 目次 */
+.article-content .toc {
+  background: #f8fdf9;
+  border: 2px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+}
+
+.article-content .toc-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #2eb67d;
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed #c8e6c9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .toc-title::before {
+  content: "📋";
+}
+
+.article-content .toc ol {
+  margin: 0;
+  padding-left: 20px;
+  counter-reset: toc-counter;
+}
+
+.article-content .toc li {
+  margin: 8px 0;
+  line-height: 1.6;
+  list-style: none;
+  counter-increment: toc-counter;
+}
+
+.article-content .toc li::before {
+  content: counter(toc-counter) ". ";
+  color: #2eb67d;
+  font-weight: bold;
+}
+
+.article-content .toc a {
+  color: #555;
+  border-bottom: none;
+}
+
+.article-content .toc a:hover {
+  color: #2eb67d;
+}
+
+/* Q&A・FAQ セクション */
+.article-content .qa-section {
+  margin: 30px 0;
+}
+
+.article-content .qa-item {
+  margin: 20px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.article-content .question {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #e8f5e9 100%);
+  font-weight: bold;
+  color: #333;
+}
+
+.article-content .question::before {
+  content: "Q";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 35px;
+  height: 35px;
+  background: #2196f3;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.article-content .answer {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-top: none;
+}
+
+.article-content .answer::before {
+  content: "A";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 35px;
+  height: 35px;
+  background: #ff7043;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.article-content .answer-content {
+  flex: 1;
+}
+
+/* ポイント・ハイライトボックス */
+.article-content .point-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  position: relative;
+}
+
+.article-content .point-box.green {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+  border: 1px solid #a5d6a7;
+}
+
+.article-content .point-box.blue {
+  background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%);
+  border: 1px solid #90caf9;
+}
+
+.article-content .point-box.yellow {
+  background: linear-gradient(135deg, #fffde7 0%, #fff8e1 100%);
+  border: 1px solid #fff59d;
+}
+
+.article-content .point-box.pink {
+  background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+  border: 1px solid #f48fb1;
+}
+
+.article-content .point-box.gray {
+  background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%);
+  border: 1px solid #bdbdbd;
+}
+
+.article-content .point-box-title {
+  font-weight: bold;
+  font-size: 1.05em;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .point-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* 警告・注意ボックス */
+.article-content .warning-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  border-left: 5px solid #ff9800;
+}
+
+.article-content .warning-box-title {
+  font-weight: bold;
+  color: #e65100;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .warning-box-title::before {
+  content: "⚠️";
+}
+
+.article-content .danger-box {
+  padding: 20px 25px;
+  border-radius: 12px;
+  margin: 25px 0;
+  background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+  border-left: 5px solid #f44336;
+}
+
+.article-content .danger-box-title {
+  font-weight: bold;
+  color: #c62828;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .danger-box-title::before {
+  content: "🚫";
+}
+
+/* 監修者・著者ボックス */
+.article-content .author-box {
+  padding: 25px;
+  background: linear-gradient(135deg, #fafafa 0%, #fff 100%);
+  border-radius: 16px;
+  margin: 40px 0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #e8e8e8;
+}
+
+.article-content .author-box-label {
+  display: inline-block;
+  background: #2eb67d;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.75em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.article-content .author-box-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.article-content .author-box img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.article-content .author-box .author-info {
+  flex: 1;
+}
+
+.article-content .author-box .author-name {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 5px 0;
+  border-left: 3px solid #2eb67d;
+  padding-left: 10px;
+}
+
+.article-content .author-box .author-title {
+  color: #2eb67d;
+  font-size: 0.85em;
+  font-weight: 500;
+  margin: 0;
+  padding-left: 13px;
+}
+
+.article-content .author-box .author-credentials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0 13px;
+}
+
+.article-content .author-box .credential {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75em;
+}
+
+.article-content .author-box .author-bio {
+  font-size: 0.9em;
+  line-height: 1.8;
+  color: #555;
+  margin: 0;
+}
+
+/* 関連記事 */
+.article-content .related-articles {
+  margin: 40px 0;
+}
+
+.article-content .related-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2eb67d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.article-content .related-title::before {
+  content: "📚";
+}
+
+.article-content .related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.article-content .related-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+
+.article-content .related-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border-bottom: none;
+}
+
+.article-content .related-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 0;
+}
+
+.article-content .related-card-body {
+  padding: 15px;
+}
+
+.article-content .related-card-title {
+  font-size: 0.95em;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.article-content .related-card-desc {
+  font-size: 0.8em;
+  color: #777;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* CTAボタン */
+.article-content .cta-container {
+  text-align: center;
+  margin: 35px 0;
+}
+
+.article-content .cta-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+  color: white !important;
+  padding: 18px 40px;
+  border-radius: 30px;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 1.05em;
+  box-shadow: 0 4px 15px rgba(46,182,125,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-bottom: none !important;
+}
+
+.article-content .cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(46,182,125,0.5);
+}
+
+.article-content .cta-button.secondary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+}
+
+.article-content .cta-button.secondary:hover {
+  box-shadow: 0 6px 20px rgba(102,126,234,0.5);
+}
+
+/* 比較テーブル */
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.95em;
+}
+
+.article-content table th {
+  background: #2eb67d;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.article-content table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.article-content table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.article-content table tr:hover {
+  background: #f0f7f4;
+}
+
+/* ステップ・手順 */
+.article-content .steps {
+  margin: 30px 0;
+}
+
+.article-content .step {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #e8e8e8;
+}
+
+.article-content .step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #2eb67d 0%, #1e8e5e 100%);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+.article-content .step-content {
+  flex: 1;
+}
+
+.article-content .step-title {
+  font-weight: bold;
+  font-size: 1.05em;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.article-content .step-desc {
+  color: #555;
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* 引用・ブロッククォート */
+.article-content blockquote {
+  margin: 25px 0;
+  padding: 20px 25px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+  border-left: 5px solid #78909c;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  color: #555;
+}
+
+.article-content blockquote cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.85em;
+  color: #888;
+  font-style: normal;
+}
+
+/* 専門家コメント（記事内インライン） */
+.article-content .expert-comment {
+  display: flex;
+  gap: 20px;
+  padding: 25px;
+  margin: 30px 0;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 16px;
+  border: 1px solid #bae6fd;
+  position: relative;
+}
+
+.article-content .expert-comment::before {
+  content: "💬 専門家の見解";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: #0ea5e9;
+  color: white;
+  padding: 4px 14px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+.article-content .expert-comment.doctor::before {
+  content: "👨‍⚕️ 医師のコメント";
+  background: #0d9488;
+}
+
+.article-content .expert-comment.supervisor::before {
+  content: "✅ 監修者コメント";
+  background: #2eb67d;
+}
+
+.article-content .expert-comment .expert-avatar {
+  flex-shrink: 0;
+}
+
+.article-content .expert-comment .expert-avatar img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.article-content .expert-comment .expert-body {
+  flex: 1;
+  padding-top: 5px;
+}
+
+.article-content .expert-comment .expert-name {
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #333;
+  margin: 0 0 2px 0;
+}
+
+.article-content .expert-comment .expert-title {
+  font-size: 0.8em;
+  color: #0ea5e9;
+  margin: 0 0 12px 0;
+}
+
+.article-content .expert-comment.doctor .expert-title {
+  color: #0d9488;
+}
+
+.article-content .expert-comment .expert-text {
+  font-size: 0.95em;
+  line-height: 1.9;
+  color: #444;
+  margin: 0;
+}
+
+.article-content .expert-comment .expert-text p {
+  margin: 0 0 10px 0;
+}
+
+.article-content .expert-comment .expert-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* 専門家コメント - 吹き出しスタイル */
+.article-content .expert-balloon {
+  display: flex;
+  gap: 15px;
+  margin: 30px 0;
+  align-items: flex-start;
+}
+
+.article-content .expert-balloon .balloon-avatar {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.article-content .expert-balloon .balloon-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+.article-content .expert-balloon .balloon-avatar .balloon-name {
+  font-size: 0.7em;
+  color: #666;
+  margin-top: 5px;
+  display: block;
+}
+
+.article-content .expert-balloon .balloon-content {
+  flex: 1;
+  position: relative;
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.article-content .expert-balloon .balloon-content::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: 20px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #fff transparent transparent;
+}
+
+.article-content .expert-balloon .balloon-content::after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 19px;
+  border-width: 11px;
+  border-style: solid;
+  border-color: transparent #e0e0e0 transparent transparent;
+  z-index: -1;
+}
+
+.article-content .expert-balloon .balloon-content p {
+  margin: 0;
+  line-height: 1.8;
+  font-size: 0.95em;
+}
+
+.article-content .expert-balloon.green .balloon-content {
+  background: #f0fdf4;
+  border-color: #a7f3d0;
+}
+
+.article-content .expert-balloon.green .balloon-content::before {
+  border-color: transparent #f0fdf4 transparent transparent;
+}
+
+.article-content .expert-balloon.green .balloon-content::after {
+  border-color: transparent #a7f3d0 transparent transparent;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .article-content {
+    padding: 15px;
+    font-size: 15px;
+  }
+
+  .article-content h1 {
+    font-size: 1.5em;
+  }
+
+  .article-content h2 {
+    font-size: 1.25em;
+    padding: 12px 15px;
+  }
+
+  .article-content .author-box-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .article-content .author-box .author-name {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  .article-content .author-box .author-title,
+  .article-content .author-box .author-credentials {
+    margin-left: 0;
+    padding-left: 0;
+    justify-content: center;
+  }
+
+  .article-content .related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .article-content .step {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .article-content .question,
+  .article-content .answer {
+    padding: 15px;
+  }
+
+  .article-content .expert-comment {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 30px;
+  }
+
+  .article-content .expert-comment .expert-body {
+    padding-top: 0;
+  }
+
+  .article-content .expert-balloon {
+    flex-direction: column;
+  }
+
+  .article-content .expert-balloon .balloon-content::before,
+  .article-content .expert-balloon .balloon-content::after {
+    display: none;
+  }
+}
+  </style>
+</head>
+<body>
+  <header class="preview-header">
+    <h1>📝 AthReebo - 記事プレビュー</h1>
+  </header>
+
+  <main class="preview-container">
+    <div class="preview-card">
+
+<div class="article-content">
+
+<span class="category-badge">スキンケア</span>
+
+<h1>ロコイド軟膏を傷口に塗って大丈夫？使用禁止の理由と注意点</h1>
+
+<div class="author-byline">
+<img src="https://placehold.co/100x100/e8f5e9/2eb67d?text=Dr" alt="著者">
+<div class="info">
+<p class="name">山田 花子（皮膚科専門医）</p>
+<p class="title">医学博士・日本皮膚科学会認定専門医</p>
+</div>
+<span class="date">2024年1月15日更新</span>
+</div>
+
+<div class="eyecatch">
+<img src="https://placehold.co/800x400/e8f5e9/2eb67d?text=Eye+Catch+Image" alt="アイキャッチ画像">
+</div>
+
+<p>ロコイド軟膏は皮膚の炎症やかゆみを抑える効果がある外用薬ですが、<strong>傷口への使用は基本的に推奨されていません</strong>。この記事では、その理由と正しい使い方について詳しく解説します。</p>
+
+<div class="toc">
+<p class="toc-title">この記事の目次</p>
+<ol>
+<li><a href="#section1">ロコイド軟膏とは？基本情報</a></li>
+<li><a href="#section2">傷口に塗ってはいけない理由</a></li>
+<li><a href="#section3">正しい使用方法</a></li>
+<li><a href="#section4">よくある質問（Q&A）</a></li>
+<li><a href="#section5">まとめ</a></li>
+</ol>
+</div>
+
+<h2 id="section1">ロコイド軟膏とは？基本情報</h2>
+
+<p>ロコイド軟膏は、<strong>ヒドロコルチゾン酪酸エステル</strong>を主成分とするステロイド外用薬です。ステロイドの強さは5段階中4番目（マイルド）に分類され、比較的穏やかな効果が特徴です。</p>
+
+<div class="point-box green">
+<p class="point-box-title">💡 ロコイド軟膏の特徴</p>
+<ul>
+<li>炎症を抑える作用がある</li>
+<li>かゆみを軽減する</li>
+<li>比較的副作用が少ない</li>
+<li>顔や首にも使用可能</li>
+</ul>
+</div>
+
+<h3>主な適応症状</h3>
+
+<table>
+<tr>
+<th>症状</th>
+<th>効果</th>
+</tr>
+<tr>
+<td>湿疹</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>皮膚炎</td>
+<td>◎</td>
+</tr>
+<tr>
+<td>かぶれ</td>
+<td>○</td>
+</tr>
+<tr>
+<td>虫刺され</td>
+<td>○</td>
+</tr>
+</table>
+
+<h2 id="section2">傷口に塗ってはいけない理由</h2>
+
+<p>ロコイド軟膏を傷口に塗ることが推奨されない理由は、主に以下の3点です。</p>
+
+<div class="warning-box">
+<p class="warning-box-title">注意が必要な理由</p>
+<p><strong>感染症のリスク増大</strong>：ステロイドは免疫機能を抑制するため、傷口に塗ると細菌感染のリスクが高まります。</p>
+</div>
+
+<h3>1. 免疫抑制作用による感染リスク</h3>
+
+<p>ステロイドには免疫を抑える作用があります。傷口は細菌が侵入しやすい状態にあるため、免疫が抑制されると感染症を起こしやすくなります。</p>
+
+<h3>2. 創傷治癒の遅延</h3>
+
+<p>ステロイドは皮膚の細胞分裂を抑制する作用があり、傷の治りを遅らせる可能性があります。</p>
+
+<h3>3. 皮膚萎縮のリスク</h3>
+
+<p>長期間の使用で皮膚が薄くなる「皮膚萎縮」が起こる可能性があります。</p>
+
+<!-- 専門家コメント：ボックススタイル -->
+<div class="expert-comment doctor">
+<div class="expert-avatar">
+<img src="https://pub-72bbcf8e61fe4f5c89e5b1d0b6409eae.r2.dev/hospital_director_kagino.webp" alt="鍵野院長">
+</div>
+<div class="expert-body">
+<p class="expert-name">鍵野 太郎（QBCスキンクリニック院長）</p>
+<p class="expert-title">皮膚科専門医・医学博士</p>
+<div class="expert-text">
+<p>臨床現場でも、傷口にステロイドを塗ってしまい感染を起こしてから来院される患者さんを見かけます。特に小さなお子さんの場合、親御さんが良かれと思って塗ってしまうケースが多いです。</p>
+<p>傷口には「湿潤療法」が基本です。まずは流水で十分に洗浄し、適切なドレッシング材で保護することをお勧めします。</p>
+</div>
+</div>
+</div>
+
+<div class="danger-box">
+<p class="danger-box-title">絶対に使用してはいけないケース</p>
+<ul>
+<li>開放創（皮膚が破れている傷）</li>
+<li>感染を起こしている傷</li>
+<li>深い切り傷</li>
+<li>やけど</li>
+</ul>
+</div>
+
+<h2 id="section3">正しい使用方法</h2>
+
+<p>ロコイド軟膏を安全に使用するための手順をご紹介します。</p>
+
+<div class="steps">
+
+<div class="step">
+<span class="step-number">1</span>
+<div class="step-content">
+<p class="step-title">患部を清潔にする</p>
+<p class="step-desc">使用前に患部を水やぬるま湯で優しく洗い、清潔なタオルで水分を拭き取ります。</p>
+</div>
+</div>
+
+<div class="step">
+<span class="step-number">2</span>
+<div class="step-content">
+<p class="step-title">適量を指に取る</p>
+<p class="step-desc">人差し指の先から第一関節までの量（約0.5g）が、手のひら2枚分の面積に塗る目安です。</p>
+</div>
+</div>
+
+<div class="step">
+<span class="step-number">3</span>
+<div class="step-content">
+<p class="step-title">優しく塗り広げる</p>
+<p class="step-desc">患部に薄く均一に塗り広げます。強くこすらないように注意しましょう。</p>
+</div>
+</div>
+
+</div>
+
+<div class="point-box yellow">
+<p class="point-box-title">⏰ 使用頻度の目安</p>
+<p>通常は<strong>1日1〜数回</strong>の塗布が推奨されています。医師の指示がある場合は、その指示に従ってください。</p>
+</div>
+
+<!-- 専門家コメント：吹き出しスタイル -->
+<div class="expert-balloon green">
+<div class="balloon-avatar">
+<img src="https://pub-72bbcf8e61fe4f5c89e5b1d0b6409eae.r2.dev/hospital_director_kagino.webp" alt="鍵野院長">
+<span class="balloon-name">鍵野院長</span>
+</div>
+<div class="balloon-content">
+<p>塗る量の目安「FTU（フィンガーチップユニット）」を覚えておくと便利です。人差し指の先端から第一関節までチューブから出した量が1FTU。これで手のひら2枚分の面積に塗れます。塗りすぎは副作用のリスクを高めるので注意してくださいね。</p>
+</div>
+</div>
+
+<h2 id="section4">よくある質問（Q&A）</h2>
+
+<div class="qa-section">
+
+<div class="qa-item">
+<div class="question">すり傷にロコイド軟膏を塗ってしまいました。大丈夫ですか？</div>
+<div class="answer">
+<div class="answer-content">
+<p>一度塗っただけで重大な問題が起こることは少ないですが、今後は傷口への使用は避けてください。すり傷には、まず流水で洗浄し、必要に応じて市販の傷薬や絆創膏を使用しましょう。症状が悪化した場合は医師に相談してください。</p>
+</div>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="question">ニキビを潰した後にロコイド軟膏を塗っても良いですか？</div>
+<div class="answer">
+<div class="answer-content">
+<p>推奨されません。ニキビを潰した箇所は細菌感染のリスクが高く、ステロイド外用薬は感染を悪化させる可能性があります。また、ステロイドはニキビを悪化させることもあります。ニキビには専用の治療薬を使用するか、皮膚科を受診してください。</p>
+</div>
+</div>
+</div>
+
+<div class="qa-item">
+<div class="question">子どもの傷に市販のステロイド軟膏を使っても大丈夫ですか？</div>
+<div class="answer">
+<div class="answer-content">
+<p>お子さんの傷口へのステロイド使用は、より慎重になる必要があります。子どもは皮膚が薄く、ステロイドの吸収率が高いため、副作用のリスクも高まります。傷口には抗菌薬入りの軟膏や絆創膏を使用し、症状が改善しない場合は小児科や皮膚科を受診してください。</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<h2 id="section5">まとめ</h2>
+
+<div class="point-box blue">
+<p class="point-box-title">📝 この記事のポイント</p>
+<ul>
+<li>ロコイド軟膏は<strong>傷口への使用は避ける</strong>べき</li>
+<li>ステロイドの免疫抑制作用により<strong>感染リスクが上がる</strong></li>
+<li>傷口には適切な<strong>傷薬や絆創膏</strong>を使用する</li>
+<li>症状が改善しない場合は<strong>医師に相談</strong>する</li>
+</ul>
+</div>
+
+<p>正しい知識を持って、適切な薬を使用することが大切です。不安な点がある場合は、薬剤師や医師に相談しましょう。</p>
+
+<div class="cta-container">
+<a href="#" class="cta-button">皮膚科を探す</a>
+</div>
+
+<hr>
+
+<div class="author-box">
+<span class="author-box-label">この記事の監修者</span>
+<div class="author-box-header">
+<img src="https://placehold.co/150x150/e8f5e9/2eb67d?text=Dr" alt="監修者">
+<div class="author-info">
+<p class="author-name">山田 花子</p>
+<p class="author-title">皮膚科専門医・医学博士</p>
+<div class="author-credentials">
+<span class="credential">日本皮膚科学会認定専門医</span>
+<span class="credential">日本アレルギー学会会員</span>
+</div>
+</div>
+</div>
+<p class="author-bio">東京大学医学部卒業。都内大学病院にて10年以上の臨床経験を持つ。皮膚疾患全般、特にアトピー性皮膚炎やアレルギー性皮膚疾患の治療を専門とする。患者さんに寄り添った丁寧な診療を心がけている。</p>
+</div>
+
+<hr>
+
+<div class="related-articles">
+<p class="related-title">関連記事</p>
+<div class="related-grid">
+
+<a href="#" class="related-card">
+<img src="https://placehold.co/400x200/e3f2fd/2196f3?text=Related+1" alt="関連記事1">
+<div class="related-card-body">
+<p class="related-card-title">ステロイド外用薬の強さランク一覧｜正しい選び方</p>
+<p class="related-card-desc">市販薬と処方薬の違いや、症状に合った選び方を解説します。</p>
+</div>
+</a>
+
+<a href="#" class="related-card">
+<img src="https://placehold.co/400x200/fff3e0/ff9800?text=Related+2" alt="関連記事2">
+<div class="related-card-body">
+<p class="related-card-title">傷の正しい処置方法｜消毒はNG？最新の傷ケア</p>
+<p class="related-card-desc">湿潤療法など、最新の傷ケア方法をわかりやすく解説。</p>
+</div>
+</a>
+
+<a href="#" class="related-card">
+<img src="https://placehold.co/400x200/fce4ec/e91e63?text=Related+3" alt="関連記事3">
+<div class="related-card-body">
+<p class="related-card-title">市販の傷薬おすすめ10選｜症状別の選び方</p>
+<p class="related-card-desc">すり傷、切り傷、やけどなど症状別におすすめの傷薬を紹介。</p>
+</div>
+</a>
+
+</div>
+</div>
+
+</div>
+
+    </div>
+  </main>
+
+</body>
+</html>
