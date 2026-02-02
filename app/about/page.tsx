@@ -69,12 +69,23 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-white">
       {/* ヒーローセクション */}
-      <section className="relative py-20 px-4 text-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6">
+      <section className="relative h-[400px] md:h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
+        {/* 背景画像 */}
+        <Image
+          src="https://pub-b953f613e39f4e5ea2f7b7a0e48c659b.r2.dev/onsen_heroes/premium-travel-japan_Editorial-Dept01.webp"
+          alt="Premium Travel Japan 編集部"
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* オーバーレイ */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+        {/* コンテンツ */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 drop-shadow-lg">
             Premium Travel Japan について
           </h1>
-          <p className="text-lg md:text-xl opacity-90 leading-relaxed">
+          <p className="text-lg md:text-xl opacity-95 leading-relaxed drop-shadow-md">
             日本が誇る温泉文化の魅力を、
             <br className="hidden md:inline" />
             もっと多くの方に届けたい。
@@ -291,12 +302,13 @@ export default function AboutPage() {
                   お問い合わせ
                 </dt>
                 <dd className="text-gray-800">
-                  <a
-                    href="mailto:tabi@premium-travel-japan.com"
-                    className="text-indigo-600 hover:underline"
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center gap-2 text-indigo-600 hover:underline"
                   >
-                    tabi@premium-travel-japan.com
-                  </a>
+                    <span>お問い合わせフォーム</span>
+                    <span className="text-xs">→</span>
+                  </Link>
                 </dd>
               </div>
             </dl>
