@@ -129,13 +129,13 @@ export async function generateMetadata({
       siteName: "プレミアムトラベル",
       images: article.hero_image_url
         ? [
-            {
-              url: article.hero_image_url,
-              width: 1200,
-              height: 630,
-              alt: article.title,
-            },
-          ]
+          {
+            url: article.hero_image_url,
+            width: 1200,
+            height: 630,
+            alt: article.title,
+          },
+        ]
         : [],
       locale: "ja_JP",
       type: "article",
@@ -157,6 +157,13 @@ export default async function ArticlePage({
 }) {
   const resolvedParams = await params;
   const fullSlug = resolvedParams.slug?.join("/") || "";
+
+  // 法的ページは専用ルートで処理されるため、ここでは404を返す
+  const legalPages = ['company', 'privacy', 'about', 'contact'];
+  if (legalPages.includes(fullSlug)) {
+    notFound();
+  }
+
   const article = await getArticleBySlug(fullSlug);
 
   // 記事が見つからない場合
