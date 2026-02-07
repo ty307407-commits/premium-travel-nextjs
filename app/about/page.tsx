@@ -225,9 +225,18 @@ export default function AboutPage() {
                 <p className="text-sm text-indigo-600 mb-3">
                   代表社員 / 編集長
                 </p>
-                <p className="text-sm text-gray-600 leading-relaxed">
-                  温泉旅行が好きすぎて、「どうやって本当に良い宿を見つけるか」をデータ分析で解明するためにこのサイトを立ち上げました。
-                </p>
+                <div className="text-sm text-gray-600 leading-relaxed space-y-2">
+                  <p>
+                    <strong>温泉巡り歴: 10年以上</strong>
+                  </p>
+                  <p>
+                    仕事をしながら、毎年のように全国の温泉地を訪問。
+                    全47都道府県の温泉を巡り、その数は300箇所以上に及びます。
+                  </p>
+                  <p>
+                    「どうやって本当に良い宿を見つけるか」をデータ分析で解明するため、このサイトを立ち上げました。
+                  </p>
+                </div>
               </div>
             </div>
 
