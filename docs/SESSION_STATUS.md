@@ -4,25 +4,13 @@
 
 ---
 
-## 🚨 現在進行中の作業
+## ✅ 直近で完了した作業
 
-### PR #15 - mainへのマージ待ち
+### PR #15 - マージ完了（2026/2/7）
 - **PR**: https://github.com/ty307407-commits/premium-travel-nextjs/pull/15
-- **ブランチ**: `claude/migrate-nextjs-update-db-rDHGU` → `main`
-- **状態**: コンフリクト解決済み、CIビルド待ち
-
-#### 解決したコンフリクト（2026/2/7）
-| ファイル | 解決内容 |
-|---------|---------|
-| `app/[...slug]/page.tsx` | SSR版を採用（`generateMetadata`でSEO対応） |
-| `app/api/article-by-slug/route.ts` | `dynamic = "force-dynamic"` 維持 + `onsen_area_id`追加 |
-| `app/api/article/route.ts` | `dynamic = "force-dynamic"` 維持 |
-| `app/api/slugs/route.ts` | `dynamic = "force-dynamic"` 維持 |
-| `docs/SESSION_STATUS.md` | 完了項目を統合 |
-
-#### 次のアクション
-1. **ビルド成功の場合** → PRをマージ（auto-merge or 手動）
-2. **ビルド失敗の場合** → エラーを確認して修正
+- **マージコミット**: `bcc4fad`
+- **内容**: Next.js移行 + SEO対応 + URL Slug対応
+- Auto-mergeにより自動マージ
 
 ---
 
@@ -138,16 +126,12 @@ result = generator.generate_for_page(page_id=897)
 
 ## 次のタスク（優先順）
 
-### 1. PR #15 をマージ（最優先）
-- CIビルドが成功したらマージする
-- マージ後、本番サイトで動作確認
-
-### 2. 一括記事生成
+### 1. 一括記事生成
 - Colabで複数ページを一括生成
 - 新タイトル形式で記事を再生成
 - TiDBに保存
 
-### 3. 追加SEO対策（検討中）
+### 2. 追加SEO対策（検討中）
 - サイトマップ生成
 - robots.txt 最適化
 - 構造化データ（JSON-LD）追加
@@ -176,8 +160,6 @@ docs/SESSION_STATUS.md を読んで、前回の状態を把握してください
 ```
 
 ### クイックチェックリスト
-1. **PR #15 の状態を確認**: https://github.com/ty307407-commits/premium-travel-nextjs/pull/15
-   - マージ済み → 次のタスクへ
-   - まだOpen → ビルド状況を確認
-2. **本番サイト確認**: https://www.premium-travel-japan.com/
-3. **Slugページ確認**: https://www.premium-travel-japan.com/promotion-onsen-trip/izu-onsen
+1. **本番サイト確認**: https://www.premium-travel-japan.com/
+2. **Slugページ確認**: https://www.premium-travel-japan.com/promotion-onsen-trip/izu-onsen
+3. **GitHub PRs**: https://github.com/ty307407-commits/premium-travel-nextjs/pulls
