@@ -4,6 +4,16 @@
 
 ---
 
+## ✅ 直近で完了した作業
+
+### PR #15 - マージ完了（2026/2/7）
+- **PR**: https://github.com/ty307407-commits/premium-travel-nextjs/pull/15
+- **マージコミット**: `bcc4fad`
+- **内容**: Next.js移行 + SEO対応 + URL Slug対応
+- Auto-mergeにより自動マージ
+
+---
+
 ## 現在の状態
 
 ### 完了したこと
@@ -114,14 +124,14 @@ result = generator.generate_for_page(page_id=897)
 
 ---
 
-## 次のタスク（未完了）
+## 次のタスク（優先順）
 
-### 一括記事生成
+### 1. 一括記事生成
 - Colabで複数ページを一括生成
 - 新タイトル形式で記事を再生成
 - TiDBに保存
 
-### 追加SEO対策（検討中）
+### 2. 追加SEO対策（検討中）
 - サイトマップ生成
 - robots.txt 最適化
 - 構造化データ（JSON-LD）追加
@@ -141,12 +151,15 @@ result = generator.generate_for_page(page_id=897)
 
 ---
 
-## 明日のセッション開始時
+## 次回セッション開始時
 
-以下のファイルを読むよう指示してください：
+以下をClaudeに伝えてください：
 
 ```
 docs/SESSION_STATUS.md を読んで、前回の状態を把握してください。
 ```
 
-これで全ての情報が分かります。
+### クイックチェックリスト
+1. **本番サイト確認**: https://www.premium-travel-japan.com/
+2. **Slugページ確認**: https://www.premium-travel-japan.com/promotion-onsen-trip/izu-onsen
+3. **GitHub PRs**: https://github.com/ty307407-commits/premium-travel-nextjs/pulls
