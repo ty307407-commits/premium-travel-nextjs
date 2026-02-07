@@ -14,7 +14,7 @@ INSERT INTO test.page_data (
   created_at,
   updated_at
 ) VALUES (
-  9998,
+  10001,
   '特定商取引法に基づく表記 | Premium Travel Japan',
   '/company',
   'KIZUNA合同会社が運営するPremium Travel Japanの特定商取引法に基づく表記ページです。',
@@ -104,7 +104,7 @@ INSERT INTO test.page_data (
   created_at,
   updated_at
 ) VALUES (
-  9997,
+  10002,
   'プライバシーポリシー | Premium Travel Japan',
   '/privacy',
   'KIZUNA合同会社が運営するPremium Travel Japanのプライバシーポリシーです。',
@@ -233,5 +233,5 @@ SELECT
   created_at,
   updated_at
 FROM test.page_data
-WHERE page_id IN (9997, 9998)
+WHERE page_id IN (10001, 10002)
 ORDER BY page_id DESC;
