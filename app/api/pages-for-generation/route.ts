@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 
 // Force dynamic rendering - this endpoint must query the database at runtime
@@ -18,24 +18,30 @@ const dbConfig = {
   },
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const limit = parseInt(searchParams.get("limit") || "20");
+
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
 
-    // 記事があるページのslug一覧を取得
+    // 記事がまだないページ（url_slugがあるもの）を取得
     const [rows] = await connection.execute<mysql.RowDataPacket[]>(
-      `SELECT p.id as page_id, p.url_slug, p.page_title, a.title as article_title
+      `SELECT p.id as page_id, p.url_slug, p.page_title, p.area_name, p.theme_name
        FROM page_data p
-       INNER JOIN articles a ON a.page_id = p.id
+       LEFT JOIN articles a ON a.page_id = p.id
        WHERE p.url_slug IS NOT NULL AND p.url_slug != ''
+         AND a.id IS NULL
        ORDER BY p.id
-       LIMIT 20`
+       LIMIT ?`,
+      [limit]
     );
 
     return NextResponse.json({
       count: rows.length,
-      slugs: rows,
+      message: "Pages available for article generation (no article yet)",
+      pages: rows,
     });
   } catch (error) {
     console.error("Database error:", error);

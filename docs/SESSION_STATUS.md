@@ -1,6 +1,6 @@
 # セッション状態サマリー
 
-**最終更新**: 2026年1月21日
+**最終更新**: 2026年2月7日
 
 ---
 
@@ -13,9 +13,15 @@
 - [x] Vercelデプロイ成功 (`premium-travel-v2`)
 - [x] Colabでの記事生成動作確認済み
 - [x] **Next.js App Routerへの移行完了**
+- [x] **URL Slug対応** - `/promotion-onsen-trip/izu-onsen` 形式でアクセス可能
+- [x] **SEOメタデータ対応** - title, description, OGP画像を動的生成
+- [x] **ファビコン追加** - `app/icon.svg`
+- [x] **タイトル形式改善** - 「厳選○選」を末尾に配置、テーマに柔軟対応
 
 ### 動作確認済みURL
-- **プレビュー**: https://premium-travel-v2.vercel.app/preview?id=897
+- **本番サイト**: https://www.premium-travel-japan.com/
+- **Slugページ例**: https://www.premium-travel-japan.com/promotion-onsen-trip/izu-onsen
+- **プレビュー**: https://www.premium-travel-japan.com/preview?id=897
 - **GitHub**: https://github.com/ty307407-commits/premium-travel-nextjs
 
 ---
@@ -27,12 +33,17 @@ premium-travel-nextjs/
 ├── app/                    # Next.js App Router
 │   ├── layout.tsx          # ルートレイアウト
 │   ├── page.tsx            # ホームページ
+│   ├── icon.svg            # ファビコン
 │   ├── globals.css         # グローバルスタイル（Tailwind CSS 4）
+│   ├── [...slug]/          # 動的ルート（SEOフレンドリーURL）
+│   │   ├── page.tsx        # サーバーコンポーネント（generateMetadata）
+│   │   └── ArticleContent.tsx  # クライアントコンポーネント
 │   ├── preview/
 │   │   └── page.tsx        # 記事プレビューページ
 │   └── api/
-│       └── article/
-│           └── route.ts    # TiDBから記事取得API
+│       ├── article/route.ts      # 記事取得API
+│       ├── article-by-slug/route.ts  # slug→記事API
+│       └── slugs/route.ts        # slug一覧API
 ├── components/
 │   └── ui/                 # shadcn/ui コンポーネント（60+）
 ├── hooks/                  # カスタムフック
@@ -69,7 +80,7 @@ premium-travel-nextjs/
 - Database: `test`
 
 ### Gemini API
-- Key: `AIzaSyDdUFyY8Rmwx2blpmd9IkK4xMNbpBCR94E`
+- Key: `（Colabで直接設定してください - GitHubには保存しない）`
 
 ### 楽天アフィリエイト
 - Affiliate ID: `12426598.beaffa49.12426599.e0b47e86`
@@ -92,7 +103,7 @@ os.environ['TIDB_PORT'] = '4000'
 os.environ['TIDB_USER'] = '4VWXcjUowH2PPCE.root'
 os.environ['TIDB_PASSWORD'] = '6KcooGBdpDcmeIGI'
 os.environ['TIDB_DATABASE'] = 'test'
-os.environ['GEMINI_API_KEY'] = 'AIzaSyDdUFyY8Rmwx2blpmd9IkK4xMNbpBCR94E'
+os.environ['GEMINI_API_KEY'] = 'YOUR_GEMINI_API_KEY'  # Google AI Studioで取得
 os.environ['RAKUTEN_AFFILIATE_ID'] = '12426598.beaffa49.12426599.e0b47e86'
 
 # 記事生成
@@ -105,20 +116,15 @@ result = generator.generate_for_page(page_id=897)
 
 ## 次のタスク（未完了）
 
-### URL Slug対応（SSG）
-- 現在: `/preview?id=897`
-- 目標: `/area/izu-kogen/theme-name` のようなSEOフレンドリーURL
-- データベースの `url_slug` フィールドを活用
-- Next.js の `generateStaticParams` で SSG 実装
-
-### SEO・クリック率向上
-- テーマタイトルに「厳選○選」などの言葉を含める
-- 例: 「【伊豆高原】昇進祝いにおすすめの温泉旅館｜厳選5選」
-- ユーザーの目を引くタイトル設計
-
 ### 一括記事生成
 - Colabで複数ページを一括生成
+- 新タイトル形式で記事を再生成
 - TiDBに保存
+
+### 追加SEO対策（検討中）
+- サイトマップ生成
+- robots.txt 最適化
+- 構造化データ（JSON-LD）追加
 
 ---
 
