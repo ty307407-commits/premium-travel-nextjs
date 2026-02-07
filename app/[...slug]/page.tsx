@@ -107,6 +107,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const resolvedParams = await params;
   const fullSlug = resolvedParams.slug?.join("/") || "";
+
+  // 法的ページは専用ルートで処理
+  const legalPages = ['company', 'privacy', 'about', 'contact'];
+  if (legalPages.includes(fullSlug)) {
+    return {
+      title: "ページが見つかりません | プレミアムトラベル",
+    };
+  }
+
   const article = await getArticleBySlug(fullSlug);
 
   if (!article) {
