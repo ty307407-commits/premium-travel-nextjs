@@ -25,13 +25,13 @@ class HotelFetcher:
     def connect(self):
         """データベース接続"""
         self.conn = mysql.connector.connect(
-            host=os.getenv('TIDB_HOST'),
-            port=int(os.getenv('TIDB_PORT', 4000)),
-            user=os.getenv('TIDB_USER'),
-            password=os.getenv('TIDB_PASSWORD'),
-            database=os.getenv('TIDB_DATABASE'),
-            ssl_ca=os.getenv('TIDB_SSL_CA'),
-            ssl_verify_cert=True
+            host='gateway01.ap-northeast-1.prod.aws.tidbcloud.com',
+            port=4000,
+            user='4VWXcjUowH2PPCE.root',
+            password='6KcooGBdpDcmeIGI',
+            database='test',
+            ssl_verify_cert=False,  # SSL検証を無効化（ローカル環境用）
+            use_pure=True           # 純粋なPython実装を使用（互換性向上）
         )
         self.cursor = self.conn.cursor(dictionary=True)
 

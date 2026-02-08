@@ -1,0 +1,48 @@
+tier,page_id,url_slug,page_title,target_keyword,parent_page_id,category,estimated_traffic,priority,status,notes
+BIG,9001,/onsen-ranking/,人気温泉地ランキング2026,温泉地 ランキング,,BH01,10000-20000,1,planned,総合ランキングページ
+MID,9101,/onsen-ranking/bath-rating/,お風呂評価が高い温泉地ランキング,温泉 風呂 ランキング,9001,BH01,1000-2000,2,planned,評価項目別
+MID,9102,/onsen-ranking/meal-rating/,料理評価が高い温泉地ランキング,温泉 料理 ランキング,9001,BH01,1000-2000,2,planned,評価項目別
+MID,9103,/onsen-ranking/service-rating/,サービス評価が高い温泉地ランキング,温泉 おもてなし ランキング,9001,BH01,500-1000,2,planned,評価項目別
+MID,9104,/onsen-ranking/room-rating/,部屋評価が高い温泉地ランキング,温泉旅館 部屋 綺麗,9001,BH01,500-1000,2,planned,評価項目別
+MID,9105,/onsen-ranking/equipment-rating/,設備評価が高い温泉地ランキング,温泉 設備 充実,9001,BH01,300-800,3,planned,評価項目別
+MID,9111,/onsen-ranking/kanto/,関東の温泉地ランキング,関東 温泉 ランキング,9001,BH01,2000-5000,2,planned,地域別
+MID,9112,/onsen-ranking/kansai/,関西の温泉地ランキング,関西 温泉 ランキング,9001,BH01,2000-5000,2,planned,地域別
+MID,9113,/onsen-ranking/kyushu/,九州の温泉地ランキング,九州 温泉 ランキング,9001,BH01,1500-3000,2,planned,地域別
+MID,9114,/onsen-ranking/tohoku/,東北の温泉地ランキング,東北 温泉 ランキング,9001,BH01,1000-2000,2,planned,地域別
+MID,9115,/onsen-ranking/hokkaido/,北海道の温泉地ランキング,北海道 温泉 ランキング,9001,BH01,1500-3000,2,planned,地域別
+MID,9116,/onsen-ranking/chubu/,中部の温泉地ランキング,中部 温泉 ランキング,9001,BH01,1000-2000,3,planned,地域別
+LOW,10001,/onsen/hakone/,箱根温泉の旅館ランキング,箱根 温泉 旅館 ランキング,9111,BH01,5000-10000,1,planned,関東エリア・個別温泉地
+LOW,10002,/onsen/kusatsu/,草津温泉の旅館ランキング,草津温泉 旅館 おすすめ,9111,BH01,3000-8000,1,planned,関東エリア・個別温泉地
+LOW,10003,/onsen/atami/,熱海温泉の旅館ランキング,熱海 温泉旅館 ランキング,9111,BH01,4000-9000,1,planned,関東エリア・個別温泉地
+LOW,10004,/onsen/izu/,伊豆温泉の旅館ランキング,伊豆 温泉 旅館,9111,BH01,3000-7000,1,planned,関東エリア・個別温泉地
+LOW,10005,/onsen/nikko/,日光温泉の旅館ランキング,日光 温泉 旅館,9111,BH01,2000-5000,2,planned,関東エリア・個別温泉地
+LOW,10006,/onsen/kinugawa/,鬼怒川温泉の旅館ランキング,鬼怒川温泉 旅館,9111,BH01,2500-6000,1,planned,関東エリア・個別温泉地
+LOW,10007,/onsen/nasu/,那須温泉の旅館ランキング,那須 温泉 旅館,9111,BH01,2000-5000,2,planned,関東エリア・個別温泉地
+LOW,10008,/onsen/ikaho/,伊香保温泉の旅館ランキング,伊香保温泉 旅館,9111,BH01,1500-4000,2,planned,関東エリア・個別温泉地
+LOW,10009,/onsen/minakami/,水上温泉の旅館ランキング,水上温泉 旅館,9111,BH01,1000-3000,3,planned,関東エリア・個別温泉地
+LOW,10010,/onsen/shiobara/,塩原温泉の旅館ランキング,塩原温泉 旅館,9111,BH01,800-2000,3,planned,関東エリア・個別温泉地
+LOW,10101,/onsen/kinosaki/,城崎温泉の旅館ランキング,城崎温泉 旅館 おすすめ,9112,BH01,3000-7000,1,planned,関西エリア・個別温泉地
+LOW,10102,/onsen/arima/,有馬温泉の旅館ランキング,有馬温泉 旅館 ランキング,9112,BH01,4000-8000,1,planned,関西エリア・個別温泉地
+LOW,10103,/onsen/shirahama/,白浜温泉の旅館ランキング,白浜温泉 旅館,9112,BH01,2500-6000,1,planned,関西エリア・個別温泉地
+LOW,10104,/onsen/katsuura/,勝浦温泉の旅館ランキング,勝浦温泉 旅館,9112,BH01,1000-3000,2,planned,関西エリア・個別温泉地
+LOW,10105,/onsen/nanki/,南紀温泉の旅館ランキング,南紀 温泉 旅館,9112,BH01,800-2000,3,planned,関西エリア・個別温泉地
+LOW,10201,/onsen/beppu/,別府温泉の旅館ランキング,別府温泉 旅館 おすすめ,9113,BH01,3000-7000,1,planned,九州エリア・個別温泉地
+LOW,10202,/onsen/yufuin/,由布院温泉の旅館ランキング,由布院 温泉 旅館 ランキング,9113,BH01,4000-9000,1,planned,九州エリア・個別温泉地
+LOW,10203,/onsen/kurokawa/,黒川温泉の旅館ランキング,黒川温泉 旅館 おすすめ,9113,BH01,2500-6000,1,planned,九州エリア・個別温泉地
+LOW,10204,/onsen/ureshino/,嬉野温泉の旅館ランキング,嬉野温泉 旅館,9113,BH01,1500-4000,2,planned,九州エリア・個別温泉地
+LOW,10205,/onsen/ibusuki/,指宿温泉の旅館ランキング,指宿温泉 旅館,9113,BH01,1500-4000,2,planned,九州エリア・個別温泉地
+LOW,10301,/onsen/nyuto/,乳頭温泉の旅館ランキング,乳頭温泉 旅館,9114,BH01,1500-4000,2,planned,東北エリア・個別温泉地
+LOW,10302,/onsen/ginzan/,銀山温泉の旅館ランキング,銀山温泉 旅館 おすすめ,9114,BH01,2000-5000,1,planned,東北エリア・個別温泉地
+LOW,10303,/onsen/zao/,蔵王温泉の旅館ランキング,蔵王温泉 旅館,9114,BH01,1500-4000,2,planned,東北エリア・個別温泉地
+LOW,10304,/onsen/akiu/,秋保温泉の旅館ランキング,秋保温泉 旅館,9114,BH01,1000-3000,2,planned,東北エリア・個別温泉地
+LOW,10305,/onsen/sakunami/,作並温泉の旅館ランキング,作並温泉 旅館,9114,BH01,500-1500,3,planned,東北エリア・個別温泉地
+LOW,10401,/onsen/noboribetsu/,登別温泉の旅館ランキング,登別温泉 旅館 おすすめ,9115,BH01,3000-7000,1,planned,北海道エリア・個別温泉地
+LOW,10402,/onsen/jozankei/,定山渓温泉の旅館ランキング,定山渓温泉 旅館,9115,BH01,2000-5000,1,planned,北海道エリア・個別温泉地
+LOW,10403,/onsen/yunokawa/,湯の川温泉の旅館ランキング,湯の川温泉 旅館,9115,BH01,1500-4000,2,planned,北海道エリア・個別温泉地
+LOW,10404,/onsen/sounkyo/,層雲峡温泉の旅館ランキング,層雲峡温泉 旅館,9115,BH01,1000-3000,2,planned,北海道エリア・個別温泉地
+LOW,10501,/onsen/gero/,下呂温泉の旅館ランキング,下呂温泉 旅館 おすすめ,9116,BH01,3000-7000,1,planned,中部エリア・個別温泉地
+LOW,10502,/onsen/yamashiro/,山代温泉の旅館ランキング,山代温泉 旅館,9116,BH01,1500-4000,2,planned,中部エリア・個別温泉地
+LOW,10503,/onsen/yamanakaonsen/,山中温泉の旅館ランキング,山中温泉 旅館,9116,BH01,1500-4000,2,planned,中部エリア・個別温泉地
+LOW,10504,/onsen/katayamazu/,片山津温泉の旅館ランキング,片山津温泉 旅館,9116,BH01,800-2000,3,planned,中部エリア・個別温泉地
+DETAIL,11001,/onsen/hakone/gora-kadan/,箱根・強羅花壇の詳細レビュー,強羅花壇 口コミ,10001,BH01,500-1500,1,planned,個別旅館詳細ページ
+DETAIL,11002,/onsen/hakone/hakone-ginyu/,箱根・箱根吟遊の詳細レビュー,箱根吟遊 口コミ,10001,BH01,500-1500,1,planned,個別旅館詳細ページ
